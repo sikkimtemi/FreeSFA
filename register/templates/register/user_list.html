@@ -1,0 +1,99 @@
+{% extends "register/_base.html" %}
+{% load bootstrap4 %}
+{% block content %}
+  <div class="card card-accent-primary">
+    <div class="card-header">メンバー管理</div>
+      <div class="card-body">
+        <div class="row" >
+          <div class="col-12">
+            {% include "./_pagination.html" %}
+          </div>
+        </div>
+        <div class="container">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th colspan="3">{{ user.workspace }}のユーザー</th>
+                  <th>アクション</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for member in user_list %}
+                  <tr>
+                    <td>
+                      {% if not member.is_workspace_active %}
+                        <span class="border border-warning"><span class="badge badge-pill badge-warning">!</span>仮登録</span>
+                      {% endif %}
+                      {{ member.username }}
+                    </td>
+                    <td>{{ member.last_name }} {{ member.first_name }}</td>
+                    <td>{{ member.get_workspace_role_display }}</td>
+                    <td>
+                      {% if user.workspace_role >= member.workspace_role %}
+                        {% if member.is_workspace_active %}
+                          <div class="btn-group">
+                            <div class="dropdown">
+                              <button class="btn btn-ghost-secondary" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-ellipsis-h fa-lg"></i>
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 35px, 0px);">
+                                <a href="{% url 'register:user_role_update' member.pk %}" class="dropdown-item">権限変更</a>
+                                <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteModal{{ member.pk }}" id="id_address_info_delete"><span class="text-danger">ワークスペースから削除</span></a>
+                              </div>
+                            </div>
+                          </div>
+                          {# 削除を確認するモーダル ダイアログ #}
+                          <div class="modal fade" id="deleteModal{{ member.pk }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="deleteModalLabel">確認</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                </div>
+                                <div class="modal-body">
+                                  <p>{{ member.email }}をワークスペースから削除しますか？</p>
+                                </div>
+                                <div class="modal-footer">
+                                  <a href="{% url 'register:user_release_from_workspace' member.pk %}" class="btn btn-outline-danger" id="del_url">OK</a>
+                                  <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>                                
+                        {% else %}
+                          <a href="{% url 'register:workspace_join_accept' member.pk %}" class="btn btn-outline-primary" id="id_accept">承認</a>
+                          <a href="#" class="btn btn-outline-danger" data-toggle="modal" data-target="#rejectModal{{ member.pk }}" id="id_reject">否認</a>
+                          {# 否認を確認するモーダル ダイアログ #}
+                          <div class="modal fade" id="rejectModal{{ member.pk }}" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="rejectModalLabel">確認</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                </div>
+                                <div class="modal-body">
+                                  <p>{{ member.email }}の参加申請を否認しますか？</p>
+                                </div>
+                                <div class="modal-footer">
+                                  <a href="{% url 'register:workspace_join_reject' member.pk %}" class="btn btn-outline-danger" id="reject_url">OK</a>
+                                  <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>                                
+                        {% endif %}
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr><td>対象のデータがありません</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

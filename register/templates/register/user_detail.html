@@ -1,0 +1,39 @@
+{% extends "register/_base.html" %}
+{% block content %}
+{% load verbose_names %}
+<div class="card card-accent-primary">
+	<div class="card-header">プロフィール確認</div>
+	<div class="card-body">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>{% get_verbose_field_name user "email" %}</th>
+                    <td>{{ user.username }}</td>
+                </tr>
+                <tr>
+                    <th>{% get_verbose_field_name user "last_name" %} {% get_verbose_field_name user "first_name" %}</th>
+                    <td>{{ user.last_name }} {{ user.first_name }}</td>
+                </tr>
+                <tr>
+                    <th>{% get_verbose_field_name user "workspace" %}</th>
+                    <td>{{ user.workspace }}</td>
+                </tr>
+                <tr>
+                    <th>{% get_verbose_field_name user "workspace_role" %}</th>
+                    <td>{{ user.get_workspace_role_display }}</td>
+                </tr>
+                <tr>
+                    <th>{% get_verbose_field_name user "my_group" %}</th>
+                    <td>
+                        {% for my_group in user.my_group.all %}
+                            {{ my_group.group_name }}
+                        {% endfor %}
+                    </td>
+        
+                </tr>
+        
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

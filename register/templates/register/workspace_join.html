@@ -1,0 +1,25 @@
+{% extends "register/_base.html" %}
+{% load bootstrap4 %}
+{% block content %}
+<div class="card card-accent-primary">
+	<div class="card-header">ワークスペース参加申請</div>
+	<div class="card-body">
+	    <p>
+	        参加を希望するワークスペースのワークスペース名を入力してください。<br/>
+	        参加申請を行うと、ワークスペースの管理者に通知されます。
+	    </p>
+        <form action="" method="POST">
+            {{ form.non_field_errors }}
+            <table class="table">
+                <tbody>
+                    {% bootstrap_form form layout='horizontal' %}
+                </tbody>
+            </table>
+            {% csrf_token %}
+            {% buttons %}
+                <button type="submit" class="btn btn-outline-primary">送信</button>
+            {% endbuttons %}
+        </form>
+    </div>
+</div>
+{% endblock %}

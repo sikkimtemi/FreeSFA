@@ -1,0 +1,16 @@
+{% extends "register/_base.html" %}
+{% load bootstrap4 %}
+{% block content %}
+<div class="card card-accent-primary">
+	<div class="card-header">ワークスペース情報変更</div>
+	<div class="card-body">
+        <form action="" method="POST">
+            {% bootstrap_form form %}
+            {% csrf_token %}
+            {% buttons %}
+                <button type="submit" class="btn btn-outline-primary">保存</button>
+            {% endbuttons %}
+        </form>
+    </div>
+</div>
+{% endblock %}

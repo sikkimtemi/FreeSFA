@@ -1,0 +1,32 @@
+.textInput {
+    width: 100%;
+}
+
+.urlinput {
+    width: 100%;
+}
+
+.emailinput {
+    width: 100%;
+}
+
+.datepicker-days th.dow:first-child,
+.datepicker-days td:first-child {
+    color: #f00;
+}
+
+.datepicker-days th.dow:last-child,
+.datepicker-days td:last-child {
+    color: #00f;
+}
+
+.form-control[disabled],
+.form-control[readonly],
+.form-control fieldset[disabled] {
+    background-color: #fff !important;
+    opacity: 1;
+}
+
+#map {
+    height: 100%;
+}

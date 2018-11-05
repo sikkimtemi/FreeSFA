@@ -1,0 +1,12 @@
+{{ user.username }} 様 ユーザー登録手続きを行っていただき、ありがとうございます。
+
+下記URLをクリックすると本登録が完了し、ログインできるようになります。
+
+本登録用URL
+{{ protocol}}://{{ domain }}{% url 'register:user_create_complete' token %}
+
+
+本登録完了後はこちらからログインしてください。
+
+ログインURL
+{{ protocol}}://{{ domain }}

@@ -1,0 +1,149 @@
+{% load verbose_names %}
+<table class="table">
+    <tr>
+        <th>項目名</th>
+        <th>内容</th>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "last_name" %}</td>
+        <td>{{ addressinfo.last_name }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "first_name" %}</td>
+        <td>{{ addressinfo.first_name }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "last_name_kana" %}</td>
+        <td>{{ addressinfo.last_name_kana }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "first_name_kana" %}</td>
+        <td>{{ addressinfo.first_name_kana }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "post" %}</td>
+        <td>{{ addressinfo.post }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "customer_name" %}</td>
+        <td>{{ addressinfo.customer_name }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "customer_name_kana" %}</td>
+        <td>{{ addressinfo.customer_name_kana }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "mail_address" %}</td>
+        <td>{{ addressinfo.mail_address }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "phone_number" %}</td>
+        <td>{{ addressinfo.phone_number }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "fax_number" %}</td>
+        <td>{{ addressinfo.fax_number }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "major_organization" %}</td>
+        <td>{{ addressinfo.major_organization }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "middle_organization" %}</td>
+        <td>{{ addressinfo.middle_organization }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "country" %}</td>
+        <td>{{ addressinfo.country }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "zip_code" %}</td>
+        <td>{{ addressinfo.zip_code }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "address1" %}</td>
+        <td>{{ addressinfo.address1 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "address2" %}</td>
+        <td>{{ addressinfo.address2 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "address3" %}</td>
+        <td>{{ addressinfo.address3 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "department_name" %}</td>
+        <td>{{ addressinfo.department_name }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "mobile_phone_number" %}</td>
+        <td>{{ addressinfo.mobile_phone_number }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "url" %}</td>
+        <td>{{ addressinfo.url }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "zip_code_2" %}</td>
+        <td>{{ addressinfo.zip_code_2 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "prefectures_2" %}</td>
+        <td>{{ addressinfo.prefectures_2 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "city_2" %}</td>
+        <td>{{ addressinfo.city_2 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "address_2" %}</td>
+        <td>{{ addressinfo.address_2 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "building_name_2" %}</td>
+        <td>{{ addressinfo.building_name_2 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "office_2" %}</td>
+        <td>{{ addressinfo.office_2 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "phone_number_2" %}</td>
+        <td>{{ addressinfo.phone_number_2 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "fax_number_2" %}</td>
+        <td>{{ addressinfo.fax_number_2 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "remarks" %}</td>
+        <td>{{ addressinfo.remarks }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "workspace" %}</td>
+        <td>{{ addressinfo.workspace }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "related_flg" %}</td>
+        <td>{{ addressinfo.related_flg }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "author" %}</td>
+        <td>{{ addressinfo.author }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "created_timestamp" %}</td>
+        <td>{{ addressinfo.created_timestamp|date:"Y/m/d G:i:s" }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "modifier" %}</td>
+        <td>{{ addressinfo.modifier }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name addressinfo "modified_timestamp" %}</td>
+        <td>{{ addressinfo.modified_timestamp|date:"Y/m/d G:i:s" }}</td>
+        <td></td>
+    </tr>
+</table>

@@ -1,0 +1,83 @@
+{% load verbose_names %}
+<table class="table">
+    <tr>
+        <th>項目名</th>
+        <th>内容</th>
+        <th>アクション</th>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name contactinfo "target_customer" %}</td>
+        <td>{{ contactinfo.target_customer }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name contactinfo "operator" %}</td>
+        <td>{{ contactinfo.operator }} {{ contactinfo.operator.last_name }} {{ contactinfo.operator.first_name }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name contactinfo "contact_type" %}</td>
+        <td>{{ contactinfo.get_contact_type_display }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name contactinfo "target_person" %}</td>
+        <td>{{ contactinfo.target_person }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name contactinfo "contact_timestamp" %}</td>
+        <td>{{ contactinfo.contact_timestamp|date:"Y/m/d G:i:s" }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name contactinfo "tel_number" %}</td>
+        <td>{{ contactinfo.tel_number }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name contactinfo "mail_address" %}</td>
+        <td>{{ contactinfo.mail_address }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name contactinfo "visited_flg" %}</td>
+        <td>{{ contactinfo.visited_flg }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name contactinfo "visit_date_plan" %}</td>
+        <td>{{ contactinfo.visit_date_plan|date:"Y/m/d" }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name contactinfo "visit_date_act" %}</td>
+        <td>{{ contactinfo.visit_date_act|date:"Y/m/d" }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name contactinfo "start_time_plan" %}</td>
+        <td>{{ contactinfo.start_time_plan|time:"G:i:s" }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name contactinfo "end_time_plan" %}</td>
+        <td>{{ contactinfo.end_time_plan|time:"G:i:s" }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name contactinfo "start_time_act" %}</td>
+        <td>{{ contactinfo.start_time_act|time:"G:i:s" }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name contactinfo "end_time_act" %}</td>
+        <td>{{ contactinfo.end_time_act|time:"G:i:s" }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name contactinfo "remarks" %}</td>
+        <td>{{ contactinfo.remarks }}</td>
+        <td></td>
+    </tr>
+</table>

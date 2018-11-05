@@ -1,0 +1,133 @@
+{% extends "./_base.html" %}
+{% load bootstrap4 %}
+{% block content %}
+<div class="card card-accent-primary">
+	<div class="card-header">{{ target_customer_name }}のコンタクト履歴</div>
+	<div class="card-body">
+  	<div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+  		<div class="modal-dialog" role="document">
+  			<div class="modal-content">
+  				<div class="modal-header">
+  					<h5 class="modal-title">検索条件</h5>
+  					<button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
+  						<span aria-hidden="true">&times;</span>
+  					</button>
+  				</div>
+  				<form id="filter" method="get">
+  					<div class="modal-body">
+              {% csrf_token %}
+              {% bootstrap_form filter.form %}
+  					</div>
+  				</form>
+  				<div class="modal-footer">
+  					<a data-dismiss="modal"><button class="btn btn-outline-secondary" type="button" id="id_back">戻る</button></a>
+  					<button type="submit" class="btn btn-outline-primary" form="filter" id="id_search_customer_info">検索</button>
+  				</div>
+  			</div>
+  		</div>
+  	</div>
+    <div class="row">
+      <div class="col-12">
+        <div class="container" style="text-align:right">
+          <div style="text-align:left">
+            {% if in_search == 'active' %}
+              <span class="badge badge-pill badge-warning">!</span>{{ filtering_message }}<a href="./?none=1" class="btn btn-outline-primary">解除</a>
+            {% endif %}
+          </div>
+          <div class="btn-group">
+            <div class="dropdown">
+              <button class="btn btn-ghost-primary" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-search fa-lg"></i></button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 35px, 0px);">
+                <div class="dropdown-header">
+                  <strong>訪問予定日で絞り込み</strong>
+                </div>
+                <a href="./?visit_date_plan={% now 'Y-m-d' %}" class="dropdown-item">今日の予定</a>
+                <div class="dropdown-header">
+                  <strong>その他の検索</strong>
+                </div>
+                <a href="#" class="dropdown-item" data-toggle="modal" data-target="#myModal">検索</a>
+                <a href="./?none=1" class="dropdown-item">検索条件解除</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" >
+    	<div class="col-12">
+    		{% include "./_pagination.html" %}
+    	</div>
+    </div>
+    <div class="table-responsive-sm">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>対応者</th>
+            <th>対応種別</th>
+            <th>対応日時</th>
+            <th>アクション</th>
+          </tr>
+        </thead>
+        <tbody>
+		      {% for contactinfo in contactinfo_list %}
+            <tr>
+              <td>
+                {% if contactinfo.operator.last_name %}
+                  {{ contactinfo.operator.last_name }} {{ contactinfo.operator.first_name }}
+                {% else %}
+                  {{ contactinfo.operator }}
+                {% endif %}
+              </td>
+              <td>{{ contactinfo.get_contact_type_display }}</td>
+              <td>{{ contactinfo.contact_timestamp }}</td>
+              <td>
+								<div class="btn-group">
+									<div class="dropdown">
+										<button class="btn btn-ghost-secondary" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											<i class="fa fa-ellipsis-h fa-lg"></i></button>
+										<div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 35px, 0px);">
+								    	<a href="{% url 'contact_detail' contactinfo.pk %}" class="dropdown-item">コンタクト履歴詳細</a>
+                  		<a href="{% url 'contact_from_customer_update' contactinfo.pk %}" class="dropdown-item">コンタクト履歴編集</a>
+                  		<a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteModal{{ contactinfo.pk }}" id="id_contact_delete"><span class="text-danger">コンタクト履歴削除</span></a>
+										</div>
+									</div>
+								</div>
+                {# 削除を確認するモーダル ダイアログ #}
+                <div class="modal fade" id="deleteModal{{ contactinfo.pk }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">確認</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      </div>
+                      <div class="modal-body">
+                        <p>{{ contactinfo.contact_timestamp }}のコンタクト履歴を削除しますか？</p>
+                      </div>
+                      <div class="modal-footer">
+                        <a href="{% url 'contact_by_customer_delete' contactinfo.pk %}" class="btn btn-outline-danger" id="del_url">OK</a>
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>                                
+        	    </td>
+            </tr>
+		        {% empty %}
+        		<tr><td>対象のデータがありません</td></tr>
+		      {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div style="position: fixed; bottom: 50px; right: 50px; width: 50px; height: 50px; z-index: 1000;">
+			<div class="btn-group">
+				<div class="dropup">
+					<button class="btn btn-lg btn-ghost-primary" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon-plus icons font-4xl d-block"></i></button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -188px, 0px);">
+						<a href="{% url 'contact_from_customer_create' target_customer_pk %}" class="dropdown-item">新規作成</a>
+					</div>
+				</div>
+			</div>
+		</div>
+  </div>
+</div>
+{% endblock %}
