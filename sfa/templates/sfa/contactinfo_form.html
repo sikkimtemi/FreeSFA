@@ -1,0 +1,36 @@
+{% extends "./_base.html" %}
+{% block content %}
+{% load bootstrap4 %}
+{{ form.media }}
+{{ form.certifications.errors }}
+<div class="card card-accent-primary">
+	<div class="card-header">コンタクト情報の編集</div>
+	<div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="float-right">
+                    <a class="btn btn-outline-secondary" onClick="history.back();">戻る</a>
+                    <a class="btn btn-outline-primary save" href="#" id="id_save" >保存</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <form method="post" id="myform">
+                    {% csrf_token %}
+                    {% bootstrap_form form layout='horizontal' %}
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="float-right">
+                    <a class="btn btn-outline-secondary" onClick="history.back();">戻る</a>
+                    <a class="btn btn-outline-primary save" href="#" id="id_save">保存</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

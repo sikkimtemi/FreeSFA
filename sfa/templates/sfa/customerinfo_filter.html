@@ -1,0 +1,274 @@
+{% extends "./_base.html" %}
+{% block content %} 
+{% load bootstrap4 %}
+{% load custom_filters %}
+{% load verbose_names %}
+{% if user.is_workspace_active %}
+
+<script language="JavaScript" type="text/javascript">
+<!--
+$(function(){
+
+  var checkAll = '#checkAll'; //「すべて」のチェックボックスのidを指定
+  var checkBox = 'input[name="check_ids"]'; //チェックボックスのnameを指定
+
+  $( checkAll ).on('click', function() {
+    $( checkBox ).prop('checked', $(this).is(':checked') );
+  });
+
+  $( checkBox ).on( 'click', function() {
+    var boxCount = $( checkBox ).length; //全チェックボックスの数を取得
+    var checked  = $( checkBox + ':checked' ).length; //チェックされているチェックボックスの数を取得
+    if( checked === boxCount ) {
+      $( checkAll ).prop( 'checked', true );
+    } else {
+      $( checkAll ).prop( 'checked', false );
+    }
+  });
+
+});
+function viewMap() {
+  if (document.getElementById('map_visible').checked) {
+    document.getElementById('map_frame').style.display = "block";
+  } else {
+    document.getElementById('map_frame').style.display = "none";
+  }
+}
+window.onload = function(){
+  viewMap();
+}
+// -->
+</script>
+
+<div class="card card-accent-primary">
+	<div class="card-header">顧客情報一覧</div>
+	<div class="card-body">
+		<div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">検索条件</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<form id="filter" method="get">
+						<div class="modal-body">
+			                {% csrf_token %}
+			                {% bootstrap_form filter.form %}
+						</div>
+					</form>
+					<div class="modal-footer">
+						<a data-dismiss="modal"><button class="btn btn-outline-secondary" type="button" id="id_back">戻る</button></a>
+						<button type="submit" class="btn btn-outline-primary" form="filter" id="id_search_customer_info">検索</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				{% if map_view %}
+					<div class="clearfix col-3">
+						<label class="switch switch-label switch-pill switch-primary float-left mr-1">
+							<input id="map_visible" class="switch-input" type="checkbox" onClick="viewMap()">
+							<span class="switch-slider" data-checked="ON" data-unchecked="OFF"></span>
+						</label>
+						<small>
+							<b>地図を表示</b>
+						</small>
+					</div>
+					<div>
+						{% if filtering_range == 'user' %}
+							<iframe id="map_frame" src="{% url 'customer_list_user_map' %}" height="500px" width="100%" allowfullscreen="" style="display:none"></iframe>
+						{% elif filtering_range == 'group' %}
+							<iframe id="map_frame" src="{% url 'customer_list_group_map' %}" height="500px" width="100%" allowfullscreen="" style="display:none"></iframe>
+						{% elif filtering_range == 'all' %}
+							<iframe id="map_frame" src="{% url 'customer_list_all_map' %}" height="500px" width="100%" allowfullscreen="" style="display:none"></iframe>
+						{% endif %}
+					</div>
+				{% endif %}
+            	<div style="text-align:left">
+	            	{% if in_search == 'active' %}
+	            		<span class="badge badge-pill badge-warning">!</span>{{ filtering_message }}<a href="./?none=1" class="btn btn-outline-primary">解除</a>
+	            	{% endif %}
+            	</div>
+	            <div style="text-align:right">
+					<div class="btn-group">
+						<div class="dropdown">
+							<button class="btn btn-ghost-primary" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-search fa-lg"></i></button>
+							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 35px, 0px);">
+								<div class="dropdown-header">
+									<strong>対応状況で絞り込み</strong>
+								</div>
+								<a href="./?action_status=0" class="dropdown-item">未対応</a>
+								<a href="./?action_status=1" class="dropdown-item">対応予定</a>
+								<a href="./?action_status=2" class="dropdown-item">対応中</a>
+								<a href="./?action_status=3&action_status_ex=" class="dropdown-item">対応終了</a>
+								<div class="dropdown-header">
+									<strong>その他の検索</strong>
+								</div>
+				            	<a href="#" class="dropdown-item" data-toggle="modal" data-target="#myModal">検索</a>
+				            	<a href="./?none=1" class="dropdown-item">検索条件解除</a>
+							</div>
+						</div>
+					</div>
+	            </div>
+			</div>
+		</div>
+		<div class="row" >
+			<div class="col-12">
+				{% include "./_pagination.html" %}
+			</div>
+		</div>
+		<form method="post" action="{% url 'address_info_bulk_update' %}">
+			{% csrf_token %}
+			<div class="row mb-1 ml-1">
+				アクション：
+				<select class="form-control col-sm-2 mr-1 ml-1" id="id_action_status" name="action_status">
+					<option value="">---------</option>
+					<option value="0">対応状況を未対応にする</option>
+					<option value="1">対応状況を対応予定にする</option>
+					<option value="2">対応状況を対応中にする</option>
+					<option value="3">対応状況を対応終了にする</option>
+					<option value="">---------</option>
+					<option value="10">営業担当者を自分に設定する</option>
+					<option value="">---------</option>
+					<option value="99">住所から緯度経度を取得する</option>
+				</select>
+				<button type="submit" class="btn btn-outline-primary" id="id_bulk_update_submit">一括更新</button>
+	        </div>
+	        <table class="table table-responsive-sm">
+	        	{% if customerinfo_list %}
+	            <thead>
+	                <tr>
+	                    <th><input type="checkbox" id="checkAll" ></th>
+	                    <th>{% get_verbose_field_name customerinfo_list.first "customer_name" %} {% get_verbose_field_name customerinfo_list.first "department_name" %}</th>
+	                    <th><i class="icon-info icons font-2xl d-block"></i></th>
+	                    <th>アクション</th>
+	                </tr>
+	            </thead>
+	            {% endif %}
+	            <tbody>
+					{% for customerinfo in customerinfo_list %}
+	                <tr>
+	                    <td>
+                        	{% if customerinfo.pk|is_editable:user.email %}
+		                    	<input type="checkbox" name="check_ids" value="{{ customerinfo.pk }}" >
+                        	{% endif %}
+                        </td>
+	                    <td>
+	                    	<a data-toggle="collapse" href="#moreInfo{{ forloop.counter }}" aria-expanded="false" aria-controls="moreInfo{{ forloop.counter }}">{{ customerinfo.customer_name }} {{ customerinfo.department_name }}</a>
+	                	</td>
+	                    <td>
+	                    	{% if customerinfo.sales_person == user %}
+				                {% if customerinfo.action_status == '0' %}
+				                  <span class="text-danger"><i class="fa fa fa-smile-o" data-toggle="tooltip" data-placement="top" title="" data-original-title="未対応"></i></span>
+				                {% elif customerinfo.action_status == '1' %}
+				                  <span class="text-warning"><i class="fa fa fa-smile-o" data-toggle="tooltip" data-placement="top" title="" data-original-title="対応予定"></i></span>
+				                {% elif customerinfo.action_status == '2' %}
+				                  <span class="text-success"><i class="fa fa fa-smile-o" data-toggle="tooltip" data-placement="top" title="" data-original-title="対応中"></i></span>
+				                {% elif customerinfo.action_status == '3' %}
+				                  <span class="text-dark"><i class="fa fa fa-smile-o" data-toggle="tooltip" data-placement="top" title="" data-original-title="対応終了"></i></span>
+				                {% endif %}
+							{% endif %}
+	                    	{% if customerinfo.latitude and customerinfo.longitude %}
+	                    		<i class="fa fa-map-marker" data-toggle="tooltip" data-placement="top" title="" data-original-title="地図を表示可能"></i>
+	                    	{% endif %}
+	                    	{% if customerinfo.contracted_flg %}
+	                    		<i class="fa fa-id-card-o" data-toggle="tooltip" data-placement="top" title="" data-original-title="契約済み"></i>
+	                    	{% endif %}
+	                    	{% if customerinfo.tel_number1 or customerinfo.tel_number2 or customerinfo.tel_number3 %}
+	                    		<i class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="" data-original-title="電話番号あり"></i>
+	                    	{% endif %}
+	                    	{% if customerinfo.fax_number %}
+	                    		<i class="fa fa-fax" data-toggle="tooltip" data-placement="top" title="" data-original-title="FAX番号あり"></i>
+	                    	{% endif %}
+	                    	{% if customerinfo.mail_address %}
+	                    		<i class="fa fa-envelope-o" data-toggle="tooltip" data-placement="top" title="" data-original-title="メールアドレスあり"></i>
+	                    	{% endif %}
+			              	{% if customerinfo.url1 %}
+			              		<a href="{{ customerinfo.url1 }}" target="_blank"><i class="fa fa-home" data-toggle="tooltip" data-placement="top" title="" data-original-title="URL1"></i></a>
+			              	{% endif %}
+			              	{% if customerinfo.url2 %}
+			              		<a href="{{ customerinfo.url2 }}" target="_blank"><i class="fa fa-home" data-toggle="tooltip" data-placement="top" title="" data-original-title="URL2"></i></a>
+			              	{% endif %}
+			              	{% if customerinfo.url3 %}
+			              		<a href="{{ customerinfo.url3 }}" target="_blank"><i class="fa fa-home" data-toggle="tooltip" data-placement="top" title="" data-original-title="URL3"></i></a>
+			              	{% endif %}
+	                    	{% if customerinfo.related_document_url %}
+	                    		<a href="{{ customerinfo.related_document_url }}" target="_blank"><i class="fa fa-dropbox" data-toggle="tooltip" data-placement="top" title="" data-original-title="関連資料あり"></i></a>
+	                    	{% endif %}
+	                    	{% if customerinfo.optional_code1 and webhook_url1 %}
+	                    		<a href="{{ webhook_url1 }}{{ customerinfo.optional_code1 }}"><i class="fa fa-folder-open" data-toggle="tooltip" data-placement="top" title="" data-original-title="外部システム1で開く" style="transform: scale(-1, 1);"></i></a>
+	                    	{% endif %}
+	                    	{% if customerinfo.optional_code2 and webhook_url2 %}
+	                    		<a href="{{ webhook_url2 }}{{ customerinfo.optional_code2 }}"><i class="fa fa-folder-open" data-toggle="tooltip" data-placement="top" title="" data-original-title="外部システム2で開く" style="transform: scale(-1, 1);"></i></a>
+	                    	{% endif %}
+	                    	{% if customerinfo.optional_code3 and webhook_url3 %}
+	                    		<a href="{{ webhook_url3 }}{{ customerinfo.optional_code3 }}"><i class="fa fa-folder-open" data-toggle="tooltip" data-placement="top" title="" data-original-title="外部システム3で開く" style="transform: scale(-1, 1);"></i></a>
+	                    	{% endif %}
+	                    </td>
+	                    <td>
+							<div class="btn-group">
+								<div class="dropdown">
+									<button class="btn btn-ghost-secondary" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="fa fa-ellipsis-h fa-lg"></i></button>
+									<div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: relative; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 35px, 0px);">
+								    	<a href="{% url 'call_history_create' customerinfo.pk %}" class="dropdown-item"><i class="icon-call-out icons"></i>電話をかける</a>
+								    	<a href="{% url 'visit_plan_from_customer_create' customerinfo.pk %}" class="dropdown-item"><i class="fa fa-calendar"></i>訪問予定を作成</a>
+								    	<a href="{% url 'visit_history_from_customer_create' customerinfo.pk %}" class="dropdown-item"><i class="fa fa-calendar-check-o"></i>訪問実績を入力</a>
+			                    		<a href="{% url 'contactinfo_by_customer_list' customerinfo.pk %}" class="dropdown-item"><i class="fa fa-list-alt"></i>コンタクト履歴一覧</a>
+			                    		{% if customerinfo.latitude and customerinfo.longitude %}
+			                    			<a href="{% url 'customer_area_search' %}?latitude={{ customerinfo.latitude|floatformat:7 }}&longitude={{ customerinfo.longitude|floatformat:7 }}&target=mine" class="dropdown-item"><i class="fa fa-map-marker"></i>近くの顧客（担当中）を探す</a>
+			                    			<a href="{% url 'customer_area_search' %}?latitude={{ customerinfo.latitude|floatformat:7 }}&longitude={{ customerinfo.longitude|floatformat:7 }}&target=group" class="dropdown-item"><i class="fa fa-map-marker"></i>近くの顧客（グループ）を探す</a>
+			                    			<a href="{% url 'customer_area_search' %}?latitude={{ customerinfo.latitude|floatformat:7 }}&longitude={{ customerinfo.longitude|floatformat:7 }}&target=all" class="dropdown-item"><i class="fa fa-map-marker"></i>近くの顧客（全顧客）を探す</a>
+			                    		{% endif %}
+			                        	{% if customerinfo.pk|is_editable:user.email %}
+			                        		<a href="{% url 'update' customerinfo.pk %}" class="dropdown-item"><i class="fa fa-pencil"></i>顧客情報編集</a>
+				                        	<a href="{% url 'delete' customerinfo.pk %}" class="dropdown-item"><span class="text-danger"><i class="fa fa-trash"></i>顧客情報削除</span></a>
+			                        	{% endif %}
+									</div>
+								</div>
+							</div>
+	                	</td>
+	                </tr>
+	                <tr>
+	                	<td colspan="4" style="padding:0px">
+		                    <div class="collapse" id="moreInfo{{ forloop.counter }}">
+		                    	{% get_verbose_field_name customerinfo_list.first "corporate_number" %}：{{ customerinfo.corporate_number }}<br/>
+		                    	住所：{{ customerinfo.address1 }}{{ customerinfo.address2 }}{{ customerinfo.address3 }}<br/>
+		                    	{% get_verbose_field_name customerinfo_list.first "tel_number1" %}：{{ customerinfo.tel_number1 }}<br/>
+		                    	{% get_verbose_field_name customerinfo_list.first "tel_number2" %}：{{ customerinfo.tel_number2 }}<br/>
+		                    	{% get_verbose_field_name customerinfo_list.first "tel_number3" %}：{{ customerinfo.tel_number3 }}<br/>
+		                    	FAX番号：{{ customerinfo.fax_number }}<br/>
+		                    	メールアドレス：{{ customerinfo.mail_address }}<br/>
+		                    	代表者：{{ customerinfo.representative }}<br/>
+		                    	担当者：{{ customerinfo.contact_name }}<br/>
+		                    	備考：{{ customerinfo.remarks }}<br/>
+		                    	営業担当者：{{ customerinfo.sales_person.last_name }} {{ customerinfo.sales_person.first_name }} {{ customerinfo.sales_person }}<br/>
+		                    	対応状況：{{ customerinfo.get_action_status_display }}<br/>
+		                    	<a href="{% url 'detail' customerinfo.pk %}">顧客情報詳細画面へ</a>
+		                    </div>
+	                	</td>
+	                </tr>
+					{% empty %}
+					<tr><td colspan="5">対象のデータがありません</td></tr>
+					{% endfor %}
+	            </tbody>
+	        </table>
+        </form>
+        <div style="position: fixed; bottom: 50px; right: 50px; width: 50px; height: 50px; z-index: 1000;">
+			<div class="btn-group dropup">
+				<div class="dropup">
+					<button class="btn btn-ghost-primary" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon-plus icons font-4xl d-block"></i></button>
+					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="top-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -188px, 0px);">
+		            	<a href="{% url 'create' %}"><button class="dropdown-item" id="id_create_customer_info">新規作成</button></a>
+		            	<a href="{% url 'customer_info_import' %}"><button class="dropdown-item" id="id_customer_info_import">CSVインポート</button></a>
+					</div>
+				</div>
+			</div>
+        </div>
+	</div>
+</div>
+{% endif %}
+{% endblock %}

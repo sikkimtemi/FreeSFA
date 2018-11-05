@@ -1,0 +1,31 @@
+{% extends "register/_base.html" %}
+{% load bootstrap4 %}
+{% load verbose_names %}
+{% block content %}
+<div class="card card-accent-primary">
+	<div class="card-header">権限変更</div>
+	<div class="card-body">
+        <a href="/register/user_list">一覧へ戻る</a><br />
+        <br />
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>{% get_verbose_field_name user "email" %}</th>
+                    <td>{{ user.username }}</td>
+                </tr>
+                <tr>
+                    <th>{% get_verbose_field_name user "last_name" %} {% get_verbose_field_name user "first_name" %}</th>
+                    <td>{{ user.last_name }} {{ user.first_name }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <form action="" method="POST">
+            {% bootstrap_form form %}
+            {% csrf_token %}
+            {% buttons %}
+                <button type="submit" class="btn btn-outline-primary">保存</button>
+            {% endbuttons %}
+        </form>
+    </div>
+</div>
+{% endblock %}

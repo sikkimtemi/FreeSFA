@@ -1,0 +1,20 @@
+{% extends "./_base.html" %}
+{% block content %}
+<div class="card card-accent-primary">
+	<div class="card-header">{{ contactinfo.target_customer.customer_name }}のコンタクト情報</div>
+	<div class="card-body">
+		<div class="row">
+			<div class="col-12">
+				<a class="btn btn-outline-secondary float-right" onClick="history.back();">戻る</a>
+			</div>
+		</div>
+		<!--  -->
+		{% include "./contactinfo_card.html" %}
+		<div class="row">
+			<div class="col-12">
+				<a class="btn btn-outline-secondary float-right" onClick="history.back();">戻る</a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

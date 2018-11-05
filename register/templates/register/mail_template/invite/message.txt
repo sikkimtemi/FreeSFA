@@ -1,0 +1,14 @@
+{{ user.last_name }} {{ user.first_name }} ( {{ user.username }} ) 様 
+
+{{ host_user.last_name }} {{ host_user.first_name }} ( {{ host_user.email }} ) 様より{{ host_user.workspace }} ワークスペースへの招待が届いています。
+
+下記URLよりサイトにアクセスの上、ユーザー登録をお願いいたします。
+
+登録用URL
+{{ protocol}}://{{ domain }}{% url 'register:user_invite_confirm' token %}
+
+
+ユーザー登録完了後はこちらからログインしてください。
+
+ログインURL
+{{ protocol}}://{{ domain }}

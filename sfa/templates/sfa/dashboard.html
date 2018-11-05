@@ -1,0 +1,195 @@
+{% extends "./_base.html" %}
+{% load static %}
+{% block content %}
+<script src="{% static 'register/vendors/chart.js/js/Chart.min.js' %}"></script>
+<script>
+<!--
+function formatDate(date) {
+	var str_month = date.getMonth() + 1;
+	var result = date.getFullYear() + "-" + str_month + "-" + date.getDate();
+	return result;
+}
+window.onload = function () {
+	var today = new Date();
+	var this_year = today.getFullYear();
+	var this_month = today.getMonth();
+	var date = today.getDate();
+	var day_num = today.getDay();
+	var this_monday = date - day_num + 1;
+	var this_sunday = this_monday + 6;
+	var start_date = new Date(this_year, this_month, this_monday);
+	var str_start_date = formatDate(start_date);
+	var end_date = new Date(this_year, this_month, this_sunday);
+	var str_end_date = formatDate(end_date);
+	var str_start_timestamp = str_start_date + ' 0:00:00';
+	var str_end_timestamp = str_end_date + ' 23:59:59';
+	var str_today = formatDate(today);
+	var str_today_start_timestamp = str_today + ' 0:00:00';
+	var str_today_end_timestamp = str_today + ' 23:59:59';
+
+	// 本日のコンタクト履歴を表示するためのリンクを生成
+	document.getElementById("id_today_outbount_link").href = "{% url 'call_history_filter' %}?contact_date=" + str_today;
+	document.getElementById("id_today_visit_plan_link").href = "{% url 'visit_target_filter' %}?visit_date=" + str_today;
+	document.getElementById("id_today_visit_link").href = "{% url 'visit_target_filter' %}?visit_date=" + str_today;
+
+	// 本日の予定と実績を取得して件数を表示
+	$.ajax({
+		url: "{% url 'get_contactinfo_count' %}",
+		type : "GET",
+		dataType : "json",
+		data : {
+			contact_timestamp_gte : str_today_start_timestamp,
+			contact_timestamp_lte : str_today_end_timestamp,
+		}
+	})
+	.done( (data) => {
+		document.getElementById("id_today_outbount_count").innerHTML = data["results"][0]["outbound_count"];
+		document.getElementById("id_today_visit_plan_count").innerHTML = data["results"][0]["visit_plan_count"];
+		document.getElementById("id_today_visit_count").innerHTML = data["results"][0]["visit_count"];
+	})
+	.fail( (data) => {
+		alert("失敗");
+		console.log(data);
+	});
+
+	// 今週の実績を取得してグラフ表示
+	$.ajax({
+		url: "{% url 'get_contactinfo_count' %}",
+		type : "GET",
+		dataType : "json",
+		data : {
+			contact_timestamp_gte : str_start_timestamp,
+			contact_timestamp_lte : str_end_timestamp,
+		}
+	})
+	.done( (data) => {
+		var ctx_outbound = document.getElementById('id_outbound_count_chart').getContext('2d');
+		var outboundCountChart = new Chart(ctx_outbound, {
+			type: 'bar',
+			data: {
+				labels: [str_start_date + 'の週',],
+				datasets: [{
+					label: '架電目標',
+					data: [{{ user.goalsetting.outbound_count }}],
+					backgroundColor: "rgba(153,255,51,0.4)"
+				}, {
+					label: '架電実績',
+					data: [data["results"][0]["outbound_count"]],
+					backgroundColor: "rgba(255,153,0,0.4)"
+				}]
+			},
+			options: {
+				scales: {
+					yAxes: [
+						{
+							ticks: {
+							beginAtZero: true,
+							}
+						}
+					]
+				}
+			}		  
+		});
+
+		var ctx_visit = document.getElementById('id_visit_count_chart').getContext('2d');
+		var visitCountChart = new Chart(ctx_visit, {
+			type: 'bar',
+			data: {
+				labels: [str_start_date + 'の週',],
+				datasets: [{
+					label: '訪問目標',
+					data: [{{ user.goalsetting.visit_count }}],
+					backgroundColor: "rgba(153,255,51,0.4)"
+				}, {
+					label: '訪問実績',
+					data: [data["results"][0]["visit_count"]],
+					backgroundColor: "rgba(255,153,0,0.4)"
+				}]
+			},
+			options: {
+				scales: {
+					yAxes: [
+						{
+							ticks: {
+							beginAtZero: true,
+							}
+						}
+					]
+				}
+			}		  
+		});
+
+	})
+	.fail( (data) => {
+		alert("失敗");
+		console.log(data);
+	});
+};
+
+-->
+</script>
+<div class="card card-accent-primary">
+	<div class="card-header">ダッシュボード</div>
+	<div class="card-body">
+		{% if not user.goalsetting %}
+			目標を設定してください。
+		{% else %}
+			<div class="card">
+				<div class="card-header">
+					本日の予定と実績
+				</div>
+				<div class="card-body">
+					<div class="card-columns cols-2">
+						<div class="card">
+							<div class="card-header">
+								架電（アウトバウンド）実績
+							</div>
+							<div class="card-body">
+								<p>本日の<a href="#" id="id_today_outbount_link">架電（アウトバウンド）実績</a>は<span id="id_today_outbount_count"></span>件です。</p>
+							</div>
+						</div>
+						<div class="card">
+							<div class="card-header">
+								訪問予定と実績
+							</div>
+							<div class="card-body">
+								<p>本日の<a href="#"  id="id_today_visit_plan_link">訪問予定</a>は<span id="id_today_visit_plan_count"></span>件です。</p>
+								<p>入力済みの<a href="#" id="id_today_visit_link">訪問実績</a>は<span id="id_today_visit_count"></span>件です。</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-header">
+					今週の目標と実績
+				</div>
+				<div class="card-body">
+					<div class="card-columns cols-2">
+						<div class="card">
+							<div class="card-header">
+								架電（アウトバウンド）件数
+							</div>
+							<div class="card-body">
+								<div class="chart-wrapper">
+									<canvas id="id_outbound_count_chart"></canvas>
+								</div>
+							</div>
+						</div>
+						<div class="card">
+							<div class="card-header">
+								訪問件数
+							</div>
+							<div class="card-body">
+								<div class="chart-wrapper">
+									<canvas id="id_visit_count_chart"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

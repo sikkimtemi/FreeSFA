@@ -1,0 +1,33 @@
+{% extends "./_base.html" %}
+{% load bootstrap4 %}
+{% block content %}
+{{ form.certifications.errors }}
+<div class="card card-accent-primary">
+	<div class="card-header">連絡先情報のインポート</div>
+	<div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="float-right">
+                    <a class="btn btn-outline-secondary" onClick="history.back();">戻る</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <form action="" method="POST" enctype="multipart/form-data">
+                  {{ form.as_ul }}
+                  {% csrf_token %}
+                  <button class="btn btn-outline-primary" type="submit">送信</button>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="float-right">
+                    <a class="btn btn-outline-secondary" onClick="history.back();">戻る</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

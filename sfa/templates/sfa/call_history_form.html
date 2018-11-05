@@ -1,0 +1,93 @@
+{% extends "./_base.html" %}
+{% block content %}
+{% load bootstrap4 %}
+{{ form.media }}
+{{ form.certifications.errors }}
+<script language="JavaScript" type="text/javascript">
+<!--
+function setSelectedTelNumber() {
+    document.getElementById('id_tel_number').value = document.getElementsByName('option_tel_number')[0].value ;
+}
+
+function ipPhoneCall() {
+    url = "{{ ip_phone_call_url }}" + document.getElementById('id_tel_number').value;
+    window.open(url, '_blank');
+}
+
+function setCallMessage() {
+    document.getElementById('id_call_message').innerHTML = document.getElementById('id_tel_number').value + "に電話をかけますか" ;
+}
+// -->
+</script>
+
+<div class="card card-accent-primary">
+	<div class="card-header">架電（アウトバウンド）の実績入力</div>
+	<div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                {% if ip_phone_call_url %}
+                    <p>
+                        「連絡先電話番号」に電話番号を入力して「<i class="icon-call-out icons"></i>」ボタンをクリックすると電話をかけることができます。
+                    </p>
+                {% endif %}
+                <div class="float-right">
+                    {% if ip_phone_call_url %}
+                        <a href="#" data-toggle="modal" data-target="#callModal" id="id_ip_phone_call_1" onClick="setCallMessage();" ><i class="icon-call-out icons font-2xl mr-1"></i></a>
+                    {% endif %}
+                    <a class="btn btn-outline-secondary mb-3" onClick="history.back();">戻る</a>
+                    <a class="btn btn-outline-primary save mb-3" href="#" id="id_save" >保存</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <form method="post" id="myform">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <label class="col-md-3 col-form-label" for="id_tel_number">連絡先電話番号の候補</label>
+                        <div class="col-md-9">
+                            <select class="form-control" name="option_tel_number" onchange="setSelectedTelNumber();" >
+                                <option value="">---------</option>
+                                <option value="{{ call_target_customer.tel_number1 }}">{{ call_target_customer.tel_number1 }}</option>
+                                <option value="{{ call_target_customer.tel_number2 }}">{{ call_target_customer.tel_number2 }}</option>
+                                <option value="{{ call_target_customer.tel_number3 }}">{{ call_target_customer.tel_number3 }}</option>
+                            </select>
+                            <small class="form-text text-muted">選択した電話番号が連絡先電話番号に入力されます。</small>
+                        </div>
+                    </div>
+                    {% bootstrap_form form layout='horizontal' %}
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="float-right">
+                    {% if ip_phone_call_url %}
+                        <a href="#" data-toggle="modal" data-target="#callModal" id="id_ip_phone_call_2" onClick="setCallMessage();"><i class="icon-call-out icons font-2xl mr-1"></i></a>
+                    {% endif %}
+                    <a class="btn btn-outline-secondary" onClick="history.back();">戻る</a>
+                    <a class="btn btn-outline-primary save" href="#" id="id_save">保存</a>
+                </div>
+            </div>
+        </div>
+        {# 架電を確認するモーダル ダイアログ #}
+        <div class="modal fade" id="callModal" tabindex="-1" role="dialog" aria-labelledby="callModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="callModalLabel">確認</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              </div>
+              <div class="modal-body">
+                <p id="id_call_message">電話をかけますか？</p>
+              </div>
+              <div class="modal-footer">
+                <a href="#" class="btn btn-outline-primary" onclick="ipPhoneCall();" data-dismiss="modal">OK</a>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>                                
+    </div>
+</div>
+{% endblock %}

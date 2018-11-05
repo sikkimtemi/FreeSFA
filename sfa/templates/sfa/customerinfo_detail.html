@@ -1,0 +1,24 @@
+{% extends "./_base.html" %}
+{% block content %}
+<div class="card card-accent-primary">
+	<div class="card-header">{{ customerinfo.customer_name }}の詳細情報</div>
+	<div class="card-body">
+		<div class="row">
+			<div class="col-12">
+				<a class="btn btn-outline-secondary float-right" onClick="history.back();">戻る</a>
+			</div>
+		</div>
+	    <div>
+			{% if customerinfo.latitude and customerinfo.longitude %}
+				<iframe src="https://www.google.com/maps/embed/v1/place?q={{customerinfo.latitude}},{{customerinfo.longitude}}&key={{api_key}}" width="720" height="389" frameborder="0" style="border:0" allowfullscreen></iframe>
+	    	{% endif %}
+	    </div>
+		{% include "./customerinfo_card.html" %}
+		<div class="row">
+			<div class="col-12">
+				<a class="btn btn-outline-secondary float-right" onClick="history.back();">戻る</a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

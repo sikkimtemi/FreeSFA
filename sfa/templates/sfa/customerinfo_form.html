@@ -1,0 +1,36 @@
+{% extends "./_base.html" %}
+{% load bootstrap4 %}
+{% block content %}
+{{ form.certifications.errors }}
+<script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
+<div class="card card-accent-primary">
+	<div class="card-header">顧客情報の編集</div>
+	<div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="float-right">
+                    <a class="btn btn-outline-secondary" onClick="history.back();">戻る</a>
+                    <a class="btn btn-outline-primary save" href="#" id="id_save" >保存</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <form method="post" id="myform" class="h-adr">
+                    {% csrf_token %}
+                    <span class="p-country-name" style="display:none;">Japan</span>
+                    {% bootstrap_form form layout='horizontal' %}
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="float-right">
+                    <a class="btn btn-outline-secondary" onClick="history.back();">戻る</a>
+                    <a class="btn btn-outline-primary save" href="#" id="id_save">保存</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

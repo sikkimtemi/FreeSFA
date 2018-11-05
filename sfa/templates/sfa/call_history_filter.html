@@ -1,0 +1,156 @@
+{% extends "./_base.html" %}
+{% block content %}
+{% load custom_filters %}
+{% load bootstrap4 %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css" type="text/css" media="all" rel="stylesheet" />
+<link href="/static/bootstrap_datepicker_plus/css/datepicker-widget.css" type="text/css" media="all" rel="stylesheet" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="/static/bootstrap_datepicker_plus/js/datepicker-widget.js"></script>
+
+<div class="card card-accent-primary">
+  <div class="card-header">
+    {% if user.last_name %}
+      {{ user.last_name }} {{ user.first_name }}
+    {% else %}
+      {{ user.email }}
+    {% endif %}
+    の訪問先
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-12">
+        <div style="text-align:right">
+          {{ contact_date }}の架電（アウトバウンド）実績({{ outbound_count }}件)を表示中
+        </div>
+        <div>
+  				<form id="filter" method="get">
+            {% csrf_token %}
+            <div class="input-group date float-right">
+              <input type="text" name="contact_date" class="form-control col-2 mr-1" placeholder="架電実施日" id="id_contact_date" value="{{ contact_date }}" readonly="true" dp_config="{&quot;id&quot;: &quot;dp_1&quot;, &quot;picker_type&quot;: &quot;DATE&quot;, &quot;linked_to&quot;: null, &quot;options&quot;: {&quot;showClose&quot;: true, &quot;showClear&quot;: true, &quot;showTodayButton&quot;: true, &quot;locale&quot;: &quot;ja&quot;, &quot;dayViewHeaderFormat&quot;: &quot;YYYY\u5e74 MMMM&quot;, &quot;ignoreReadonly&quot;: true, &quot;allowInputToggle&quot;: true, &quot;format&quot;: &quot;YYYY-MM-DD&quot;}}">
+              <div class="input-group-addon input-group-append" data-target="#datetimepicker1" data-toggle="datetimepickerv">
+                <div class="input-group-text"><i class="glyphicon glyphicon-calendar"></i></div>
+              </div>
+    					<button type="submit" class="btn btn-outline-primary ml-1" form="filter" id="id_search_customer_info">表示切替</button>
+            </div>
+  				</form>
+        </div>
+      </div>
+    </div>
+    <div class="row" >
+      <div class="col-12">
+        {% include "./_pagination.html" %}
+      </div>
+    </div>
+    <div class="table-responsive-sm">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>対象顧客</th>
+            <th>電話番号</th>
+            <th>架電実施時刻</th>
+            <th><i class="icon-info icons font-2xl d-block"></i></th>
+            <th>アクション</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for contactinfo in contactinfo_list %}
+            <tr>
+              <td>
+                <a data-toggle="collapse" href="#moreInfo{{ forloop.counter }}" aria-expanded="false" aria-controls="moreInfo{{ forloop.counter }}">{{ contactinfo.target_customer.customer_name }} {{ contactinfo.target_customer.department_name }}</a>
+              </td>
+              <td>{{ contactinfo.tel_number }}</td>
+              <td>{{ contactinfo.contact_timestamp|date:"G:i" }}</td>
+              <td>
+                {% if contactinfo.called_flg %}
+                  <span class="text-success"><i class="icon-call-out icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="架電済み"></i></span>
+                {% else %}
+                  <span class="text-warning"><i class="icon-call-out icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="未架電"></i></span>
+                {% endif %}
+              	{% if contactinfo.target_customer.url1 %}
+              		<a href="{{ contactinfo.target_customer.url1 }}" target="_blank"><i class="fa fa-home" data-toggle="tooltip" data-placement="top" title="" data-original-title="URL1"></i></a>
+              	{% endif %}
+              	{% if contactinfo.target_customer.url2 %}
+              		<a href="{{ contactinfo.target_customer.url2 }}" target="_blank"><i class="fa fa-home" data-toggle="tooltip" data-placement="top" title="" data-original-title="URL2"></i></a>
+              	{% endif %}
+              	{% if contactinfo.target_customer.url3 %}
+              		<a href="{{ contactinfo.target_customer.url3 }}" target="_blank"><i class="fa fa-home" data-toggle="tooltip" data-placement="top" title="" data-original-title="URL3"></i></a>
+              	{% endif %}
+              	{% if contactinfo.target_customer.related_document_url %}
+              		<a href="{{ contactinfo.target_customer.related_document_url }}" target="_blank"><i class="fa fa-dropbox" data-toggle="tooltip" data-placement="top" title="" data-original-title="関連資料あり"></i></a>
+              	{% endif %}
+              	{% if contactinfo.target_customer.optional_code1 and webhook_url1 %}
+              		<a href="{{ webhook_url1 }}{{ contactinfo.target_customer.optional_code1 }}"><i class="fa fa-folder-open" data-toggle="tooltip" data-placement="top" title="" data-original-title="外部システム1で開く" style="transform: scale(-1, 1);"></i></a>
+              	{% endif %}
+              	{% if contactinfo.target_customer.optional_code2 and webhook_url2 %}
+              		<a href="{{ webhook_url2 }}{{ contactinfo.target_customer.optional_code2 }}"><i class="fa fa-folder-open" data-toggle="tooltip" data-placement="top" title="" data-original-title="外部システム2で開く" style="transform: scale(-1, 1);"></i></a>
+              	{% endif %}
+              	{% if contactinfo.target_customer.optional_code3 and webhook_url3 %}
+              		<a href="{{ webhook_url3 }}{{ contactinfo.target_customer.optional_code3 }}"><i class="fa fa-folder-open" data-toggle="tooltip" data-placement="top" title="" data-original-title="外部システム3で開く" style="transform: scale(-1, 1);"></i></a>
+              	{% endif %}
+
+              </td>
+              <td>
+                <div class="btn-group">
+                  <div class="dropdown">
+                  	<button class="btn btn-ghost-secondary" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                		<i class="fa fa-ellipsis-h fa-lg"></i></button>
+                  	<div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 35px, 0px);">
+								    	<a href="{% url 'call_history_create' contactinfo.target_customer.pk %}" class="dropdown-item"><i class="icon-call-out icons"></i>再度電話をかける</a>
+                  		<a href="{% url 'call_history_update' contactinfo.pk %}" class="dropdown-item"><i class="fa fa-pencil"></i>架電実績を修正</a>
+								    	<a href="{% url 'visit_plan_from_customer_create' contactinfo.target_customer.pk %}" class="dropdown-item"><i class="fa fa-calendar"></i>訪問予定を作成</a>
+                  		{% if contactinfo.target_customer.latitude and contactinfo.target_customer.longitude %}
+                  			<a href="{% url 'customer_area_search' %}?latitude={{ contactinfo.target_customer.latitude|floatformat:7 }}&longitude={{ contactinfo.target_customer.longitude|floatformat:7 }}&target=mine" class="dropdown-item"><i class="fa fa-map-marker"></i>近くの顧客（担当中）を探す</a>
+                  			<a href="{% url 'customer_area_search' %}?latitude={{ contactinfo.target_customer.latitude|floatformat:7 }}&longitude={{ contactinfo.target_customer.longitude|floatformat:7 }}&target=group" class="dropdown-item"><i class="fa fa-map-marker"></i>近くの顧客（グループ）を探す</a>
+                  			<a href="{% url 'customer_area_search' %}?latitude={{ contactinfo.target_customer.latitude|floatformat:7 }}&longitude={{ contactinfo.target_customer.longitude|floatformat:7 }}&target=all" class="dropdown-item"><i class="fa fa-map-marker"></i>近くの顧客（全顧客）を探す</a>
+                  		{% endif %}
+                  		{% if contactinfo.target_customer.pk|is_editable:user.email %}
+                    		<a href="{% url 'update' contactinfo.target_customer.pk %}" class="dropdown-item"><i class="fa fa-pencil"></i>顧客情報編集</a>
+                  		{% endif %}
+                  		<a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteModal{{ contactinfo.pk }}" id="id_contact_delete"><span class="text-danger"><i class="fa fa-trash"></i>架電実績削除</span></a>
+                  	</div>
+                  </div>
+                </div>
+                {# 削除を確認するモーダル ダイアログ #}
+                <div class="modal fade" id="deleteModal{{ contactinfo.pk }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">確認</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      </div>
+                      <div class="modal-body">
+                        <p>{{ contactinfo.contact_timestamp|date:"G:i" }}の{{ contactinfo.target_customer }}への架電実績を削除しますか？</p>
+                      </div>
+                      <div class="modal-footer">
+                        <a href="{% url 'visit_plan_or_history_delete' contactinfo.pk %}" class="btn btn-outline-danger" id="del_url">OK</a>
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>                                
+              </td>
+            </tr>
+            <tr>
+            	<td colspan="5" style="padding:0px">
+                  <div class="collapse" id="moreInfo{{ forloop.counter }}">
+                  	住所：{{ contactinfo.target_customer.address1 }}{{ contactinfo.target_customer.address2 }}{{ contactinfo.target_customer.address3 }}<br/>
+                  	電話番号：{{ contactinfo.target_customer.tel_number1 }} {{ contactinfo.target_customer.tel_number2 }} {{ contactinfo.target_customer.tel_number3 }}<br/>
+                  	メールアドレス：{{ contactinfo.target_customer.mail_address }}<br/>
+                  	担当者：{{ contactinfo.target_customer.contact_name }}<br/>
+                  	電話で話した相手：{{ contactinfo.target_person }}<br/>
+                  	企業備考：{{ contactinfo.target_customer.remarks }}<br/>
+                  	架電時備考：{{ contactinfo.remarks }}<br/>
+                  	<a href="{% url 'detail' contactinfo.target_customer.pk %}">顧客情報詳細画面へ</a>
+                  </div>
+            	</td>
+            </tr>
+          {% empty %}
+            <tr><td>対象のデータがありません</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

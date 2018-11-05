@@ -1,0 +1,233 @@
+{% load verbose_names %}
+<table class="table">
+    <tr>
+        <th>項目名</th>
+        <th>内容</th>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "corporate_number" %}</td>
+        <td id=id_corporate_number>
+            {{ customerinfo.corporate_number }}
+        </td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "optional_code1" %}</td>
+        <td id=id_optional_code1>{{ customerinfo.optional_code1 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "optional_code2" %}</td>
+        <td id=id_optional_code2>{{ customerinfo.optional_code2 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "optional_code3" %}</td>
+        <td id=id_optional_code3>{{ customerinfo.optional_code3 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "customer_name" %}</td>
+        <td id=id_customer_name>
+            {{ customerinfo.customer_name }}
+        </td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "department_name" %}</td>
+        <td>{{ customerinfo.department_name }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "tel_number1" %}</td>
+        <td>
+            {{ customerinfo.tel_number1 }}
+        </td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "tel_number2" %}</td>
+        <td>
+            {{ customerinfo.tel_number2 }}
+        </td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "tel_number3" %}</td>
+        <td>
+            {{ customerinfo.tel_number3 }}
+        </td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "fax_number" %}</td>
+        <td>
+            {{ customerinfo.fax_number }}
+        </td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "mail_address" %}</td>
+        <td>
+            {{ customerinfo.mail_address }}
+        </td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "representative" %}</td>
+        <td>{{ customerinfo.representative }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "contact_name" %}</td>
+        <td>{{ customerinfo.contact_name }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "zip_code" %}</td>
+        <td>{{ customerinfo.zip_code }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "address1" %}</td>
+        <td>{{ customerinfo.address1 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "address2" %}</td>
+        <td>{{ customerinfo.address2 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "address3" %}</td>
+        <td>{{ customerinfo.address3 }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "latitude" %}</td>
+        <td>{{ customerinfo.latitude }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "longitude" %}</td>
+        <td>{{ customerinfo.longitude }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "url1" %}</td>
+        <td><a href="{{ customerinfo.url1 }}" target="_blank">{{ customerinfo.url1 }}</a></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "url2" %}</td>
+        <td><a href="{{ customerinfo.url2 }}" target="_blank">{{ customerinfo.url2 }}</a></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "url3" %}</td>
+        <td><a href="{{ customerinfo.url3 }}" target="_blank">{{ customerinfo.url3 }}</a></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "industry_code" %}</td>
+        <td>{{ customerinfo.industry_code }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "data_source" %}</td>
+        <td>{{ customerinfo.data_source }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "contracted_flg" %}</td>
+        <td>{{ customerinfo.contracted_flg }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "potential" %}</td>
+        <td id=id_potential>{{ customerinfo.potential }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "tel_limit_flg" %}</td>
+        <td>{{ customerinfo.tel_limit_flg }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "fax_limit_flg" %}</td>
+        <td>{{ customerinfo.fax_limit_flg }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "mail_limit_flg" %}</td>
+        <td>{{ customerinfo.mail_limit_flg }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "attention_flg" %}</td>
+        <td>{{ customerinfo.attention_flg }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "related_document_url" %}</td>
+        <td><a href="{{ customerinfo.related_document_url }}" target="_blank">{{ customerinfo.related_document_url }}</a></td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "remarks" %}</td>
+        <td>{{ customerinfo.remarks }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "shared_edit_user" %}</td>
+        <td>
+            {% for shared_edit_user in customerinfo.shared_edit_user.all %}
+                {{ shared_edit_user.email }}
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "shared_view_user" %}</td>
+        <td>
+            {% for shared_view_user in customerinfo.shared_view_user.all %}
+                {{ shared_view_user.email }}
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "shared_edit_group" %}</td>
+        <td>
+            {% for shared_edit_group in customerinfo.shared_edit_group.all %}
+                {{ shared_edit_group.group_name }}
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "shared_view_group" %}</td>
+        <td>
+            {% for shared_view_group in customerinfo.shared_view_group.all %}
+                {{ shared_view_group.group_name }}
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "workspace" %}</td>
+        <td id=id_workspace>{{ customerinfo.workspace }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "sales_person" %}</td>
+        <td>{{ customerinfo.sales_person.last_name }} {{ customerinfo.sales_person.first_name }} {{ customerinfo.sales_person }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "action_status" %}</td>
+        <td>{{ customerinfo.get_action_status_display }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "tel_called_flg" %}</td>
+        <td>{{ customerinfo.tel_called_flg }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "mail_sent_flg" %}</td>
+        <td>{{ customerinfo.mail_sent_flg }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "fax_sent_flg" %}</td>
+        <td>{{ customerinfo.fax_sent_flg }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "dm_sent_flg" %}</td>
+        <td>{{ customerinfo.dm_sent_flg }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "visited_flg" %}</td>
+        <td>{{ customerinfo.visited_flg }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "public_status" %}</td>
+        <td>{{ customerinfo.get_public_status_display }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "author" %}</td>
+        <td id=id_author>{{ customerinfo.author }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "created_timestamp" %}</td>
+        <td>{{ customerinfo.created_timestamp|date:"Y/m/d G:i:s" }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "modifier" %}</td>
+        <td id=id_modifier>{{ customerinfo.modifier }}</td>
+    </tr>
+    <tr>
+        <td>{% get_verbose_field_name customerinfo "modified_timestamp" %}</td>
+        <td>{{ customerinfo.modified_timestamp|date:"Y/m/d G:i:s" }}</td>
+    </tr>
+</table>

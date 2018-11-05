@@ -1,0 +1,28 @@
+{% extends "register/_base.html" %}
+{% load bootstrap4 %}
+{% block content %}
+<div class="card card-accent-primary">
+	<div class="card-header">ワークスペースへの招待</div>
+	<div class="card-body">
+        <p>
+            ワークスペースへ招待するユーザーのメールアドレスを入力してください。<br/>
+            招待メールを送信します。
+	    </p>
+
+        <form action="" method="POST">
+            {{ form.non_field_errors }}
+            <table class="table">
+                <tbody>
+                    {% bootstrap_form form layout='horizontal' %}
+                </tbody>
+            </table>
+            {% csrf_token %}
+            <script src='https://www.google.com/recaptcha/api.js'></script>
+            <div class="g-recaptcha mb-3" data-sitekey="{{ site_key }}"></div>
+            {% buttons %}
+                <button type="submit" class="btn btn-outline-primary">送信</button>
+            {% endbuttons %}
+        </form>
+    </div>
+</div>
+{% endblock %}

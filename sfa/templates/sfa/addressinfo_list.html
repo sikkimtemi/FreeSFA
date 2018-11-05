@@ -1,0 +1,67 @@
+{% extends "./_base.html" %}
+{% block content %}
+{% load bootstrap4 %}
+<div class="card card-accent-primary">
+	<div class="card-header">連絡先一覧</div>
+	<div class="card-body">
+    <div class="row" >
+    	<div class="col-12">
+    		{% include "./_pagination.html" %}
+    	</div>
+    </div>
+    <div class="table-responsive-sm">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>姓 名</th>
+            <th>会社名</th>
+            <th>関連付け</th>
+            <th>アクション</th>
+          </tr>
+        </thead>
+        <tbody>
+  				{% for addressinfo in addressinfo_list %}
+            <tr>
+              <td>{{ addressinfo.last_name }} {{ addressinfo.first_name }}</td>
+              <td>{{ addressinfo.customer_name }}</td>
+              <td>
+                {% if addressinfo.related_flg %}
+                  <span class="text-success"><i class="fa fa-chain fa-lg"></i></span>
+                {% else %}
+                  <span class="text-warning"><i class="fa fa-chain-broken fa-lg"></i></span>
+                {% endif %}
+              </td>
+              <td>
+								<div class="btn-group">
+									<div class="dropdown">
+										<button class="btn btn-ghost-secondary" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											<i class="fa fa-ellipsis-h fa-lg"></i></button>
+										<div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 35px, 0px);">
+								    	<a href="{% url 'address_info_detail' addressinfo.pk %}" class="dropdown-item" id="id_address_info_detail">連絡先情報詳細</a>
+                  		<a href="{% url 'address_info_update' addressinfo.pk %}" class="dropdown-item" id="id_address_info_update">連絡先情報編集</a>
+                    	<a href="{% url 'address_info_delete' addressinfo.pk %}" class="dropdown-item" id="id_address_info_delete"><span class="text-danger">連絡先情報削除</span></a>
+										</div>
+									</div>
+								</div>
+            	</td>
+            </tr>
+  				{% empty %}
+    				<tr><td>対象のデータがありません</td></tr>
+      		{% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div style="position: fixed; bottom: 50px; right: 50px; width: 50px; height: 50px; z-index: 1000;">
+			<div class="btn-group">
+				<div class="dropup">
+					<button class="btn btn-lg btn-ghost-primary" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon-plus icons font-4xl d-block"></i></button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -188px, 0px);">
+						<a href="{% url 'address_info_create' %}" class="dropdown-item">新規作成</a>
+						<a href="{% url 'address_info_import' %}" class="dropdown-item">CSVインポート</a>
+					</div>
+				</div>
+			</div>
+		</div>
+  </div>
+</div>
+{% endblock %}

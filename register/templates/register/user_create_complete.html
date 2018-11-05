@@ -1,0 +1,13 @@
+{% extends "register/_base.html" %}
+{% block content %}
+<div class="card card-accent-primary">
+	<div class="card-header">ユーザー登録完了</div>
+	<div class="card-body">
+        <p>
+            本登録が完了しました。<br>
+            登録されたメールアドレスとパスワードでログインしてください。<br>
+            <a class="btn btn-outline-primary" href="{% url 'register:login' %}">ログイン</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

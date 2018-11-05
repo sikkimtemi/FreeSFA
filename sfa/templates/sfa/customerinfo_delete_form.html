@@ -1,0 +1,39 @@
+{% extends "./_base.html" %}
+{% load bootstrap4 %}
+{% block content %}
+{{ form.certifications.errors }}
+<div class="card card-accent-primary">
+	<div class="card-header">顧客情報の削除</div>
+	<div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <p>この顧客情報を削除します。よろしいですか？</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="float-right">
+                    <a class="btn btn-outline-secondary" onClick="history.back();">戻る</a>
+                    <a class="btn btn-outline-danger save" href="#">削除</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <form method="post" id="myform">
+                    {% csrf_token %}
+                    {% bootstrap_form form layout='horizontal' %}
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="float-right">
+                    <a class="btn btn-outline-secondary" onClick="history.back();">戻る</a>
+                    <a class="btn btn-outline-danger save" href="#">削除</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,6 @@
+{{ user.last_name }} {{ user.first_name }} ( {{ user.email }} ) さんが ワークスペース {{ user.workspace }} へ参加申請を行いました。
+
+ユーザー情報一覧画面からご確認の上、承認または否認をお願いします。
+
+本登録用URL
+{{ protocol}}://{{ domain }}{% url 'register:user_list' %}

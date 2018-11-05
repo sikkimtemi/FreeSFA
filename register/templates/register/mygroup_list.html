@@ -1,0 +1,41 @@
+{% extends "register/_base.html" %}
+{% load bootstrap4 %}
+{% load verbose_names %}
+{% block content %}
+<div class="card card-accent-primary">
+	<div class="card-header">グループ情報一覧</div>
+	<div class="card-body">
+        <div class="row" >
+        	<div class="col-12">
+        		{% include "./_pagination.html" %}
+        	</div>
+        </div>
+        <div class="container">
+            <div class="table-responsive">
+                <table class="table">
+                    {% if mygroup_list %}
+                    <thead>
+                        <tr>
+                            <th>{% get_verbose_field_name mygroup_list.first "group_name" %}</th>
+                            <th>アクション</th>
+                        </tr>
+                    </thead>
+                    {% endif %}
+                    <tbody>
+        				{% for mygroup in mygroup_list %}
+                        <tr>
+                            <td>{{ mygroup.group_name }}</td>
+                            <td>
+                        		<a href="{% url 'register:mygroup_update' mygroup.pk %}" class="btn btn-outline-primary" id="id_mygroup_edit">編集</a>
+                        	</td>
+                        </tr>
+        				{% empty %}
+        				<tr><td>対象のデータがありません</td></tr>
+        				{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

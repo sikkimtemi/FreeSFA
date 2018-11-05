@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <base href="./">
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="description" content="営業支援システム">
+    <meta name="author" content="インターマン株式会社">
+    <meta name="keyword" content="">
+    <title>FreeSFA</title>
+    <!-- favicon -->
+    <link href="{% static 'register/img/favicon.ico' %}" rel="icon">
+    <!-- Icons-->
+    <link href="{% static 'register/vendors/@coreui/icons/css/coreui-icons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'register/vendors/flag-icon-css/css/flag-icon.min.css' %}" rel="stylesheet">
+    <link href="{% static 'register/vendors/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static 'register/vendors/simple-line-icons/css/simple-line-icons.css' %}" rel="stylesheet">
+    <!-- Main styles for this application-->
+    <link href="{% static 'register/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'register/vendors/pace-progress/css/pace.min.css' %}" rel="stylesheet">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-128217794-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'UA-128217794-1');
+    </script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a href="/">TOPへ戻る</a>
+    </nav>
+    <main class="main">
+      <div class="container-fluid">
+        <div class="animated fadeIn">
+          {% block content %} 
+          {% endblock %}
+        </div>
+      </div>
+    </main>
+    <!-- CoreUI and necessary plugins-->
+    <script src="{% static 'register/vendors/jquery/js/jquery.min.js' %}"></script>
+    <script src="{% static 'register/vendors/popper.js/js/popper.min.js' %}"></script>
+    <script src="{% static 'register/vendors/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'register/vendors/pace-progress/js/pace.min.js' %}"></script>
+    <script src="{% static 'register/vendors/perfect-scrollbar/js/perfect-scrollbar.min.js' %}"></script>
+    <script src="{% static 'register/vendors/@coreui/coreui/js/coreui.min.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,246 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <base href="./">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="description" content="営業支援システム">
+    <meta name="author" content="インターマン株式会社">
+    <meta name="keyword" content="">
+    <title>FreeSFA</title>
+    <!-- favicon -->
+    <link href="{% static 'register/img/favicon.ico' %}" rel="icon">
+    <!-- Icons-->
+    <link href="{% static 'register/vendors/@coreui/icons/css/coreui-icons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'register/vendors/flag-icon-css/css/flag-icon.min.css' %}" rel="stylesheet">
+    <link href="{% static 'register/vendors/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static 'register/vendors/simple-line-icons/css/simple-line-icons.css' %}" rel="stylesheet">
+    <!-- Main styles for this application-->
+    <link href="{% static 'register/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'register/vendors/pace-progress/css/pace.min.css' %}" rel="stylesheet">
+    <link href="{% static 'sfa/css/sfa.css' %}" rel="stylesheet">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-128217794-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'UA-128217794-1');
+    </script>
+    <script src="{% static 'register/vendors/jquery/js/jquery.min.js' %}"></script>
+    <script>
+      // 現在地から近くの顧客を探すためのURLを生成する
+      function CreateGPSSearchURL() {
+        // 現在地を取得
+        navigator.geolocation.getCurrentPosition(
+          function(pos) {
+            var latitude = pos.coords.latitude;
+            var longitude = pos.coords.longitude;
+            document.getElementById("id_gps_area_search_user").setAttribute("href", document.getElementById("id_gps_area_search_user").getAttribute("href") + "&latitude=" + latitude + "&longitude=" + longitude);
+            document.getElementById("id_gps_area_search_group").setAttribute("href", document.getElementById("id_gps_area_search_group").getAttribute("href") + "&latitude=" + latitude + "&longitude=" + longitude);
+            document.getElementById("id_gps_area_search_all").setAttribute("href", document.getElementById("id_gps_area_search_all").getAttribute("href") + "&latitude=" + latitude + "&longitude=" + longitude);
+          }
+        );
+      }
+    </script>
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar">
+      <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="{% url 'index' %}">
+        <img class="navbar-brand-full" src="{% static 'sfa/img/logolargesample.svg' %}" width="129" alt="FreeSFA">
+        <img class="navbar-brand-minimized" src="{% static 'sfa/img/logosample.svg' %}" width="30" height="30" alt="FreeSFA">
+      </a>
+      <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button" data-toggle="sidebar-lg-show">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <ul class="nav navbar-nav d-md-down-none">
+        {% if user.is_staff %}
+          <li class="nav-item px-3"><a class="nav-link" href="{% url 'admin:index'%}" id="admin_site">管理サイト</a></li>
+        {% endif %}
+        {% if user.workspace_role >= '1' %}
+          <li class="nav-item px-3"><a class="nav-link" href="{% url 'register:user_list' %}">メンバー管理</a></li>
+        {% endif %}
+        {% if user.workspace and not user.is_workspace_active %}
+          <li class="nav-item px-3">ワークスペースは仮登録中です。</li>
+        {% endif %}
+      </ul>
+      <ul class="nav navbar-nav ml-auto">
+        {% if user.workspace %}
+          <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true" onClick="CreateGPSSearchURL()">
+              <i class="icon-target"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg">
+              <div class="dropdown-header text-center">
+                <strong>現在地から近くの顧客を探す</strong>
+              </div>
+              <a class="dropdown-item" id="id_gps_area_search_user" href="{% url 'customer_area_search' %}?target=user">担当中の顧客を探す</a>
+              <a class="dropdown-item" id="id_gps_area_search_group" href="{% url 'customer_area_search' %}?target=group">グループ担当中の顧客を探す</a>
+              <a class="dropdown-item" id="id_gps_area_search_all" href="{% url 'customer_area_search' %}?target=all">すべての顧客を探す</a>
+            </div>
+          </li>
+        {% endif %}
+        <li class="nav-item dropdown px-3">
+          <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+            {% if user.last_name or user.first_name %}
+                {{ user.last_name }} {{ user.first_name }}
+            {% else %}
+                {{ user.email }}
+            {% endif %}
+          </a>
+          <div class="dropdown-menu dropdown-menu-right">
+            <div class="dropdown-header text-center">
+              <strong>ワークスペース</strong>
+            </div>
+            {% if user.workspace and not user.is_workspace_active %}
+              <div class="dropdown-item">仮登録中です</div>
+            {% endif %}
+            {% if user.workspace %}
+              {% if user.workspace_role == '2' %}
+                <a class="dropdown-item" href="{% url 'register:workspace_update' user.workspace.pk %}"><i class="fa fa-building"></i> {{ user.workspace }}</a>
+                {% if user.workspace.workspaceenvironmentsetting %}
+                  <a class="dropdown-item" href="{% url 'workspace_environment_setting_update' user.workspace.workspaceenvironmentsetting.pk %}"><i class="fa fa-gear"></i> 環境設定</a>
+                {% else %}
+                  <a class="dropdown-item" href="{% url 'workspace_environment_setting_create' %}"><i class="fa fa-gear"></i> 環境設定</a>
+                {% endif %}
+          {% else %}
+                <div class="dropdown-item"><i class="fa fa-building"></i> {{ user.workspace }}</div>
+              {% endif %}
+              {% if user.workspace_role >= '1' %}
+                <a class="dropdown-item" href="{% url 'register:user_invite' %}"><i class="fa fa-paper-plane-o"></i> メンバーを招待</a>
+                <a class="dropdown-item" href="{% url 'register:user_list' %}"><i class="fa fa-group"></i> メンバー管理</a>
+              {% endif %}
+            {% else %}
+                <a class="dropdown-item" href="{% url 'register:workspace_join' user.pk %}"><i class="fa fa-send-o"></i> ワークスペース参加申請</a>
+                <a class="dropdown-item" href="{% url 'register:workspace_create' %}"><i class="fa fa-group"></i> ワークスペース新規作成</a>
+            {% endif %}
+            {% if user.is_workspace_active %}
+              <div class="dropdown-header text-center">
+                <strong>グループ</strong>
+              </div>
+              <a class="dropdown-item" href="{% url 'register:mygroup_create' %}"><i class="fa fa-group"></i> 新規グループ作成</a>
+              <a class="dropdown-item" href="{% url 'register:mygroup_list' %}"><i class="fa fa-list"></i> グループ一覧</a>
+            {% endif %}
+            <div class="dropdown-header text-center">
+              <strong>設定</strong>
+            </div>
+            <a class="dropdown-item" href="{% url 'register:user_update' user.pk %}"><i class="fa fa-user"></i> プロフィール</a>
+            <a class="dropdown-item" href="{% url 'register:password_change' %}"><i class="fa fa-lock"></i> パスワード変更</a>
+            {% if user.goalsetting %}
+              <a class="dropdown-item" href="{% url 'goal_setting_update' user.goalsetting.pk %}"><i class="fa fa-trophy"></i> 目標設定</a>
+            {% else %}
+              <a class="dropdown-item" href="{% url 'goal_setting_create' %}"><i class="fa fa-trophy"></i> 目標設定</a>
+            {% endif %}
+            <a class="dropdown-item" href="{% url 'register:logout' %}"><i class="fa fa-sign-out"></i> ログアウト</a>
+          </div>
+        </li>
+      </ul>
+    </header>
+    <div class="app-body">
+      <div class="sidebar">
+        <nav class="sidebar-nav">
+          <ul class="nav">
+            {% if user.workspace %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'dashboard' %}">
+                <i class="nav-icon icon-speedometer"></i> ダッシュボード
+              </a>
+            </li>
+            <li class="nav-title">顧客情報管理</li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'customer_list_user' %}">
+                <i class="nav-icon icon-people"></i> 担当中の顧客
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'customer_list_group' %}">
+                <i class="nav-icon icon-people"></i> グループ担当顧客
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'customer_list_all' %}">
+                <i class="nav-icon icon-people"></i> 全顧客表示
+              </a>
+            </li>
+            <li class="nav-title">連絡先情報管理</li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'address_info_list' %}">
+                <i class="nav-icon icon-notebook"></i> 連絡先一覧
+              </a>
+            </li>
+            <li class="nav-title">コンタクト管理</li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'call_history_filter' %}">
+                <i class="nav-icon icon-call-out"></i> 架電(アウトバウンド)
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'visit_target_filter' %}">
+                <i class="nav-icon icon-calendar"></i> 訪問予定と実績
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'contactinfo_by_user_list' %}">
+                <i class="nav-icon icon-calendar"></i> 全コンタクト履歴
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+        <button class="sidebar-minimizer brand-minimizer" type="button"></button>
+      </div>
+      <main class="main">
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+            {% if user.is_workspace_active %}
+              {% block content %} 
+              {% endblock %}
+            {% else %}
+              {% if user.workspace %}
+              	<div class="card card-accent-primary">
+              		<div class="card-header">注意事項</div>
+              		<div class="card-body">
+                    <p>ワークスペースは仮登録中です。</p>
+                    <p>ワークスペースの管理者に承認されたら利用開始できます。</p>
+                  </div>
+                </div>
+              {% else %}
+              	<div class="card card-accent-primary">
+              		<div class="card-header">ようこそ！</div>
+              		<div class="card-body">
+              		  <p>FreeSFAをお使いいただき、ありがとうございます。</p>
+                    <p>各種機能をご利用いただくには、まずワークスペースに所属する必要があります。</p>
+                    <p>右上のアカウント名をクリックし、既存のワークスペースに参加申請を行うか、ワークスペースを新規作成してください。</p>
+                  </div>
+                </div>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+      </main>
+    </div>
+    <footer class="app-footer">
+      <div>
+        <span>&copy; 2018 <a href="http://www.interman.co.jp">interman corp.</a></span>
+      </div>
+      <div class="ml-auto">
+        <span>Powered by</span>
+        <a href="https://coreui.io">CoreUI</a>
+      </div>
+    </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script src="{% static 'register/vendors/popper.js/js/popper.min.js' %}"></script>
+    <script src="{% static 'register/vendors/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'register/vendors/pace-progress/js/pace.min.js' %}"></script>
+    <script src="{% static 'register/vendors/perfect-scrollbar/js/perfect-scrollbar.min.js' %}"></script>
+    <script src="{% static 'register/vendors/@coreui/coreui/js/coreui.min.js' %}"></script>
+    <script src="{% static 'register/js/tooltips.js' %}"></script>
+    <script src="{% static 'sfa/js/sfa.js' %}"></script>
+  </body>
+</html>
