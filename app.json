@@ -1,0 +1,51 @@
+{
+  "name": "FreeSFA",
+  "description": "オープンソースの営業支援システム(SFA)です。",
+  "repository": "https://github.com/sikkimtemi/FreeSFA",
+  "keywords": ["python", "django", "sfa"],
+  "env": {
+    "EMAIL_HOST": {
+      "description": "メール(SMTP)サーバーのホスト名を設定します。 Gmailを使う場合はsmtp.gmail.comを設定してください。",
+      "value": "smtp.gmail.com"
+    },
+    "EMAIL_HOST_PASSWORD": {
+      "description": "メールサーバーのパスワードを設定します。",
+      "value": "dummy"
+    },
+    "EMAIL_HOST_USER": {
+      "description": "メールサーバーのユーザーIDを設定します。",
+      "value": "dummy"
+    },
+    "EMAIL_PORT": {
+      "description": "メールサーバーのポート番号を設定します。通常は25か465です。Gmailを使う場合は465を設定してください。",
+      "value": "465"
+    },
+    "EMAIL_USE_SSL": {
+      "description": "メールサーバーでSSLを使用するかどうかを設定します。TrueもしくはFalseを入力してください。Gmailを使う場合はTrueを設定してください。",
+      "value": "True"
+    },
+    "GOOGLE_RECAPTCHA_SECRET_KEY": {
+      "description": "「私はロボットではありません」を表示して、アカウント追加を制限するための秘密鍵です。",
+      "value": "dummy"
+    },
+    "GOOGLE_RECAPTCHA_SITE_KEY": {
+      "description": "「私はロボットではありません」を表示して、アカウント追加を制限するためのキーです。",
+      "value": "dummy"
+    },
+    "SECRET_KEY": {
+      "description": "Djangoの秘密鍵。自動生成されたランダムな値が入ります。",
+      "generator": "secret"
+    },
+    "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY": {
+      "description": "Googleのソーシャル認証で用いるキーです。",
+      "value": "dummy"
+    },
+    "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET": {
+      "description": "Googleのソーシャル認証で用いる秘密鍵です。",
+      "value": "dummy"
+    },
+  },
+  "scripts": {
+    "postdeploy": "python manage.py migrate --noinput"
+  }
+}
