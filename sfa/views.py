@@ -1679,9 +1679,10 @@ class VisitPlanCreateView(ContactInfoCreateView):
         initial = super().get_initial()
         initial['contact_type'] = '0'  # コンタクト種別を「訪問」に設定
         initial['operator'] = self.request.user  # 対応者をログインユーザーに設定
-        query = self.request.session['contact_info_query']
-        initial['visit_date_plan'] = query[
-            'visit_date'] if 'visit_date' in query else None  # 訪問日_予定に表示中の訪問予定/実績の日付を設定
+        if 'contact_info_query' in self.request.session:
+            query = self.request.session['contact_info_query']
+            initial['visit_date_plan'] = query[
+                'visit_date'] if 'visit_date' in query else None  # 訪問日_予定に表示中の訪問予定/実績の日付を設定
         return initial
 
 
@@ -1718,9 +1719,10 @@ class VisitHistoryCreateView(ContactInfoCreateView):
         initial = super().get_initial()
         initial['contact_type'] = '0'  # コンタクト種別を「訪問」に設定
         initial['operator'] = self.request.user  # 対応者をログインユーザーに設定
-        query = self.request.session['contact_info_query']
-        initial['visit_date_act'] = query[
-            'visit_date'] if 'visit_date' in query else None  # 訪問日_実績に表示中の訪問予定/実績の日付を設定
+        if 'contact_info_query' in self.request.session:
+            query = self.request.session['contact_info_query']
+            initial['visit_date_act'] = query[
+                'visit_date'] if 'visit_date' in query else None  # 訪問日_実績に表示中の訪問予定/実績の日付を設定
         return initial
 
 
