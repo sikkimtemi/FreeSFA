@@ -1,0 +1,8 @@
+*.py[co]
+__pycache__
+#staticfiles
+local_settings.py
+db.sqlite3
+.coverage
+.~c9_invoke_*.py
+my.cnf
