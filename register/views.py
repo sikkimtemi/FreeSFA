@@ -46,7 +46,7 @@ class Login(LoginView):
 
 class Logout(LoginRequiredMixin, LogoutView):
     """ログアウトページ"""
-    template_name = 'register/top.html'
+    template_name = 'register/login.html'
 
 
 class UserCreate(generic.CreateView):
@@ -79,7 +79,7 @@ class UserCreate(generic.CreateView):
         if not result['success']:
             form.add_error(None, '「私はロボットではありません」にチェックを入れてください')
             return self.form_invalid(form)
-        
+
         # 仮登録と本登録の切り替えは、is_active属性を使う
         user = form.save(commit=False)
         user.is_active = False
@@ -152,6 +152,11 @@ class UserCreateComplete(generic.TemplateView):
         return HttpResponseBadRequest()
 
 
+class Logout(LoginRequiredMixin, LogoutView):
+    """ログアウトページ"""
+    template_name = 'register/top.html'
+
+
 class OnlyYouMixin(UserPassesTestMixin):
     """本人か、スーパーユーザーだけユーザーページアクセスを許可する"""
     raise_exception = True
@@ -159,6 +164,17 @@ class OnlyYouMixin(UserPassesTestMixin):
     def test_func(self):
         user = self.request.user
         return user.pk == self.kwargs['pk'] or user.is_superuser
+
+
+class UserDelete(OnlyYouMixin, generic.TemplateView):
+    """ユーザーの削除（実際には無効化）"""
+
+    def get(self, request, **kwargs):
+        """ユーザーの無効化"""
+        user = User.objects.get(pk=kwargs['pk'])
+        user.is_active = False
+        user.save()
+        return redirect('register:logout')
 
 
 class UserDetail(OnlyYouMixin, generic.DetailView):
@@ -376,7 +392,7 @@ class UserInviteView(LoginRequiredMixin, generic.CreateView):
         if not result['success']:
             form.add_error(None, '「私はロボットではありません」にチェックを入れてください')
             return self.form_invalid(form)
-            
+
         # ユーザーを仮登録して招待メールを送信する
         user = form.save(commit=False)
         user.is_active = False

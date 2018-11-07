@@ -16,6 +16,10 @@ urlpatterns = [
         views.UserCreateComplete.as_view(),
         name='user_create_complete'),
     path(
+        'user_delete/<int:pk>/',
+        views.UserDelete.as_view(),
+        name='user_delete'),
+    path(
         'user_detail/<int:pk>/',
         views.UserDetail.as_view(),
         name='user_detail'),
