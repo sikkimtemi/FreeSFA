@@ -133,7 +133,9 @@ window.onload = function(){
 					<option value="">---------</option>
 					<option value="10">営業担当者を自分に設定する</option>
 					<option value="">---------</option>
-					<option value="99">住所から緯度経度を取得する</option>
+					<option value="50">住所から緯度経度を取得する</option>
+					<option value="">---------</option>
+					<option value="99" class="text-danger">顧客情報を削除する</option>
 				</select>
 				<button type="submit" class="btn btn-outline-primary" id="id_bulk_update_submit">一括更新</button>
 	        </div>
@@ -225,11 +227,29 @@ window.onload = function(){
 			                    		{% endif %}
 			                        	{% if customerinfo.pk|is_editable:user.email %}
 			                        		<a href="{% url 'update' customerinfo.pk %}" class="dropdown-item"><i class="fa fa-pencil"></i>顧客情報編集</a>
-				                        	<a href="{% url 'delete' customerinfo.pk %}" class="dropdown-item"><span class="text-danger"><i class="fa fa-trash"></i>顧客情報削除</span></a>
+				                        	<a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteModal{{ contactinfo.pk }}" id="id_cutomerinfo_delete"><span class="text-danger"><i class="fa fa-trash"></i>顧客情報削除</span></a>
 			                        	{% endif %}
 									</div>
 								</div>
 							</div>
+							{# 削除を確認するモーダル ダイアログ #}
+							<div class="modal fade" id="deleteModal{{ customerinfo.pk }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="deleteModalLabel">確認</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+										</div>
+										<div class="modal-body">
+											<p>{{ customerinfo.customer_name }}の顧客情報を削除しますか？</p>
+										</div>
+										<div class="modal-footer">
+											<a href="{% url 'delete' customerinfo.pk %}" class="btn btn-outline-danger" id="del_url">OK</a>
+											<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+										</div>
+									</div>
+								</div>
+							</div>                                
 	                	</td>
 	                </tr>
 	                <tr>

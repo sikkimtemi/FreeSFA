@@ -160,7 +160,7 @@ class CommonRedirectTests(TestCase):
             '/detail/1/',
             '/create/',
             '/update/1/',
-            '/delete/1/',
+            #'/delete/1/',
             '/customer_info_import/',
             '/contact_create/',
             '/contact_from_customer_create/1/',
@@ -203,7 +203,7 @@ class CommonRedirectTests(TestCase):
             request.user = self.nonactive_user
             reverse_match = resolve(target_url)
             response = reverse_match.func(request)
-            
+
             self.assertEquals(response['Location'], '/')
             self.assertEquals(response.status_code, 302)
 
