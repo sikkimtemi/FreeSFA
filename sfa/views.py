@@ -15,8 +15,8 @@ from pytz import timezone
 from register.models import User
 from sfa.common_util import ExtractNumber, DecimalDefaultProc
 from .filters import CustomerInfoFilter, ContactInfoFilter
-from .forms import ContactInfoForm, CustomerInfoForm, CustomerInfoDeleteForm, AddressInfoForm, AddressInfoUploadForm, CustomerInfoUploadForm, VisitHistoryForm, VisitPlanForm, CallHistoryForm, GoalSettingForm, WorkspaceEnvironmentSettingForm
-from .models import ContactInfo, CustomerInfo, MyGroup, AddressInfo, GoalSetting, WorkspaceEnvironmentSetting
+from .forms import ContactInfoForm, CustomerInfoForm, CustomerInfoDeleteForm, AddressInfoForm, AddressInfoUploadForm, CustomerInfoUploadForm, VisitHistoryForm, VisitPlanForm, CallHistoryForm, GoalSettingForm, WorkspaceEnvironmentSettingForm, CustomerInfoDisplaySettingForm
+from .models import ContactInfo, CustomerInfo, MyGroup, AddressInfo, GoalSetting, WorkspaceEnvironmentSetting, CustomerInfoDisplaySetting
 import csv
 import datetime
 import io
@@ -162,6 +162,30 @@ class CustomerInfoFilterView(LoginRequiredMixin, PaginationMixin, FilterView):
             ctx['webhook_url3'] = self.request.user.workspace.workspaceenvironmentsetting.webhook_url3
         except:
             ctx['webhook_url3'] = ''
+
+        # 顧客情報の表示制御を行う
+        try:
+            my_filter = ctx['filter']
+            form = my_filter.form
+            customer_info_display_setting = self.request.user.workspace.customerinfodisplaysetting
+            optional_code1 = form.fields['optional_code1']
+            optional_code2 = form.fields['optional_code2']
+            optional_code3 = form.fields['optional_code3']
+            if not customer_info_display_setting.optional_code1_active_flg:
+                optional_code1.widget = forms.HiddenInput()
+            if not customer_info_display_setting.optional_code2_active_flg:
+                optional_code2.widget = forms.HiddenInput()
+            if not customer_info_display_setting.optional_code3_active_flg:
+                optional_code3.widget = forms.HiddenInput()
+            if customer_info_display_setting.optional_code1_display_name:
+                optional_code1.label = customer_info_display_setting.optional_code1_display_name
+            if customer_info_display_setting.optional_code2_display_name:
+                optional_code2.label = customer_info_display_setting.optional_code2_display_name
+            if customer_info_display_setting.optional_code3_display_name:
+                optional_code3.label = customer_info_display_setting.optional_code3_display_name
+        except:
+            pass
+
         return ctx
 
 
@@ -492,7 +516,7 @@ class CustomerInfoCreateView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         """
-        フォームの選択肢を絞り込む
+        フォームの選択肢を絞り込む。表示項目の表示制御
         """
         ctx = super().get_context_data(**kwargs)
         form = ctx['form']
@@ -518,6 +542,27 @@ class CustomerInfoCreateView(LoginRequiredMixin, CreateView):
         sales_person = form.fields['sales_person']
         sales_person.queryset = User.objects.filter(
             workspace=login_user.workspace.pk)
+
+        # 顧客情報の表示制御を行う
+        try:
+            customer_info_display_setting = self.request.user.workspace.customerinfodisplaysetting
+            optional_code1 = form.fields['optional_code1']
+            optional_code2 = form.fields['optional_code2']
+            optional_code3 = form.fields['optional_code3']
+            if not customer_info_display_setting.optional_code1_active_flg:
+                optional_code1.widget = forms.HiddenInput()
+            if not customer_info_display_setting.optional_code2_active_flg:
+                optional_code2.widget = forms.HiddenInput()
+            if not customer_info_display_setting.optional_code3_active_flg:
+                optional_code3.widget = forms.HiddenInput()
+            if customer_info_display_setting.optional_code1_display_name:
+                optional_code1.label = customer_info_display_setting.optional_code1_display_name
+            if customer_info_display_setting.optional_code2_display_name:
+                optional_code2.label = customer_info_display_setting.optional_code2_display_name
+            if customer_info_display_setting.optional_code3_display_name:
+                optional_code3.label = customer_info_display_setting.optional_code3_display_name
+        except:
+            pass
 
         return ctx
 
@@ -625,6 +670,27 @@ class CustomerInfoUpdateView(LoginRequiredMixin, UpdateView):
         sales_person = form.fields['sales_person']
         sales_person.queryset = User.objects.filter(
             workspace=login_user.workspace.pk)
+
+        # 顧客情報の表示制御を行う
+        try:
+            customer_info_display_setting = self.request.user.workspace.customerinfodisplaysetting
+            optional_code1 = form.fields['optional_code1']
+            optional_code2 = form.fields['optional_code2']
+            optional_code3 = form.fields['optional_code3']
+            if not customer_info_display_setting.optional_code1_active_flg:
+                optional_code1.widget = forms.HiddenInput()
+            if not customer_info_display_setting.optional_code2_active_flg:
+                optional_code2.widget = forms.HiddenInput()
+            if not customer_info_display_setting.optional_code3_active_flg:
+                optional_code3.widget = forms.HiddenInput()
+            if customer_info_display_setting.optional_code1_display_name:
+                optional_code1.label = customer_info_display_setting.optional_code1_display_name
+            if customer_info_display_setting.optional_code2_display_name:
+                optional_code2.label = customer_info_display_setting.optional_code2_display_name
+            if customer_info_display_setting.optional_code3_display_name:
+                optional_code3.label = customer_info_display_setting.optional_code3_display_name
+        except:
+            pass
 
         return ctx
 
@@ -794,6 +860,28 @@ class CustomerInfoDeleteView(LoginRequiredMixin, UpdateView):
             workspace=login_user.workspace.pk).exclude(email=author)
         shared_view_user.queryset = User.objects.filter(
             workspace=login_user.workspace.pk).exclude(email=author)
+
+        # 顧客情報の表示制御を行う
+        try:
+            customer_info_display_setting = self.request.user.workspace.customerinfodisplaysetting
+            optional_code1 = form.fields['optional_code1']
+            optional_code2 = form.fields['optional_code2']
+            optional_code3 = form.fields['optional_code3']
+            if not customer_info_display_setting.optional_code1_active_flg:
+                optional_code1.widget = forms.HiddenInput()
+            if not customer_info_display_setting.optional_code2_active_flg:
+                optional_code2.widget = forms.HiddenInput()
+            if not customer_info_display_setting.optional_code3_active_flg:
+                optional_code3.widget = forms.HiddenInput()
+            if customer_info_display_setting.optional_code1_display_name:
+                optional_code1.label = customer_info_display_setting.optional_code1_display_name
+            if customer_info_display_setting.optional_code2_display_name:
+                optional_code2.label = customer_info_display_setting.optional_code2_display_name
+            if customer_info_display_setting.optional_code3_display_name:
+                optional_code3.label = customer_info_display_setting.optional_code3_display_name
+        except:
+            pass
+
         return ctx
 
 
@@ -2069,6 +2157,50 @@ class WorkspaceEnvironmentSettingUpdateView(LoginRequiredMixin, UpdateView):
     """ ワークスペース環境設定を行う（更新） """
     model = WorkspaceEnvironmentSetting
     form_class = WorkspaceEnvironmentSettingForm
+    success_url = reverse_lazy('dashboard')
+
+    def dispatch(self, request, *args, **kwargs):
+        # 以下の条件をすべて満たす場合のみ更新可能
+        # ・ワークスペースに所属し、有効になっている
+        # ・権限がオーナー
+        # ・更新対象が自分自身のワークスペースと一致
+        if request.user.workspace and request.user.is_workspace_active and request.user.workspace_role == '2' and request.user.workspace.workspaceenvironmentsetting.pk == kwargs['pk']:
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            return redirect('index')
+
+
+class CustomerInfoDisplaySettingCreateView(LoginRequiredMixin, CreateView):
+    """ 顧客情報の表示制御をワークスペース毎に設定する（新規作成） """
+    model = CustomerInfoDisplaySetting
+    form_class = CustomerInfoDisplaySettingForm
+    success_url = reverse_lazy('dashboard')
+
+    def dispatch(self, request, *args, **kwargs):
+        # 以下の条件をすべて満たす場合のみ表示可能
+        # ・ワークスペースに所属し、有効になっている
+        # ・権限がオーナー
+        if request.user.workspace and request.user.is_workspace_active and request.user.workspace_role == '2':
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            return redirect('index')
+
+    def get_initial(self):
+        """デフォルト値の設定"""
+        initial = super().get_initial()
+        initial['workspace'] = self.request.user.workspace  # 環境設定対象のワークス―ペース
+        return initial
+
+    def form_valid(self, form):
+        """Hidden値を書き換えられた場合の対策"""
+        form.instance.workspace = self.request.user.workspace
+        return super().form_valid(form)
+
+
+class CustomerInfoDisplaySettingUpdateView(LoginRequiredMixin, UpdateView):
+    """ 顧客情報の表示制御をワークスペース毎に設定する（更新） """
+    model = CustomerInfoDisplaySetting
+    form_class = CustomerInfoDisplaySettingForm
     success_url = reverse_lazy('dashboard')
 
     def dispatch(self, request, *args, **kwargs):

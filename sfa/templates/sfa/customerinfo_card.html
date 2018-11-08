@@ -10,18 +10,42 @@
             {{ customerinfo.corporate_number }}
         </td>
     </tr>
-    <tr>
-        <td>{% get_verbose_field_name customerinfo "optional_code1" %}</td>
-        <td id=id_optional_code1>{{ customerinfo.optional_code1 }}</td>
-    </tr>
-    <tr>
-        <td>{% get_verbose_field_name customerinfo "optional_code2" %}</td>
-        <td id=id_optional_code2>{{ customerinfo.optional_code2 }}</td>
-    </tr>
-    <tr>
-        <td>{% get_verbose_field_name customerinfo "optional_code3" %}</td>
-        <td id=id_optional_code3>{{ customerinfo.optional_code3 }}</td>
-    </tr>
+    {% if not user.workspace.customerinfodisplaysetting or user.workspace.customerinfodisplaysetting.optional_code1_active_flg %}
+        <tr>
+            <td>
+                {% if user.workspace.customerinfodisplaysetting.optional_code1_display_name %}
+                    {{ user.workspace.customerinfodisplaysetting.optional_code1_display_name }}
+                {% else %}
+                    {% get_verbose_field_name customerinfo "optional_code1" %}
+                {% endif %}
+            </td>
+            <td id=id_optional_code1>{{ customerinfo.optional_code1 }}</td>
+        </tr>
+    {% endif %}
+    {% if not user.workspace.customerinfodisplaysetting or user.workspace.customerinfodisplaysetting.optional_code2_active_flg %}
+        <tr>
+            <td>
+                {% if user.workspace.customerinfodisplaysetting.optional_code2_display_name %}
+                    {{ user.workspace.customerinfodisplaysetting.optional_code2_display_name }}
+                {% else %}
+                    {% get_verbose_field_name customerinfo "optional_code2" %}
+                {% endif %}
+            </td>
+            <td id=id_optional_code2>{{ customerinfo.optional_code2 }}</td>
+        </tr>
+    {% endif %}
+    {% if not user.workspace.customerinfodisplaysetting or user.workspace.customerinfodisplaysetting.optional_code3_active_flg %}
+        <tr>
+            <td>
+                {% if user.workspace.customerinfodisplaysetting.optional_code3_display_name %}
+                    {{ user.workspace.customerinfodisplaysetting.optional_code3_display_name }}
+                {% else %}
+                    {% get_verbose_field_name customerinfo "optional_code3" %}
+                {% endif %}
+            </td>
+            <td id=id_optional_code3>{{ customerinfo.optional_code3 }}</td>
+        </tr>
+    {% endif %}
     <tr>
         <td>{% get_verbose_field_name customerinfo "customer_name" %}</td>
         <td id=id_customer_name>

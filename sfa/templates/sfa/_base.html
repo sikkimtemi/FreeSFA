@@ -109,6 +109,11 @@
                 {% else %}
                   <a class="dropdown-item" href="{% url 'workspace_environment_setting_create' %}"><i class="fa fa-gear"></i> 環境設定</a>
                 {% endif %}
+                {% if user.workspace.customerinfodisplaysetting %}
+                  <a class="dropdown-item" href="{% url 'customer_info_display_setting_update' user.workspace.workspaceenvironmentsetting.pk %}"><i class="fa fa-list-alt"></i> 顧客情報の表示設定</a>
+                {% else %}
+                  <a class="dropdown-item" href="{% url 'customer_info_display_setting_create' %}"><i class="fa fa-list-alt"></i> 顧客情報の表示設定</a>
+                {% endif %}
           {% else %}
                 <div class="dropdown-item"><i class="fa fa-building"></i> {{ user.workspace }}</div>
               {% endif %}
