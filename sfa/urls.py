@@ -49,6 +49,8 @@ from .views import (
     GoalSettingUpdateView,
     WorkspaceEnvironmentSettingCreateView,
     WorkspaceEnvironmentSettingUpdateView,
+    CustomerInfoDisplaySettingCreateView,
+    CustomerInfoDisplaySettingUpdateView,
 )
 from django.contrib import admin
 
@@ -223,4 +225,12 @@ urlpatterns = [
         'workspace_environment_setting_update/<int:pk>/',
         WorkspaceEnvironmentSettingUpdateView.as_view(),
         name='workspace_environment_setting_update'),
+    path(
+        'customer_info_display_setting_create/',
+        CustomerInfoDisplaySettingCreateView.as_view(),
+        name='customer_info_display_setting_create'),
+    path(
+        'customer_info_display_setting_update/<int:pk>/',
+        CustomerInfoDisplaySettingUpdateView.as_view(),
+        name='customer_info_display_setting_update'),
 ]

@@ -795,3 +795,49 @@ class WorkspaceEnvironmentSetting(models.Model):
         blank=True,
         help_text='顧客情報の任意コード3を用いて外部システムを呼び出すときに設定します。',
     )
+
+class CustomerInfoDisplaySetting(models.Model):
+    """
+    顧客情報の表示制御をワークスペース毎に設定する
+    """
+    workspace = models.OneToOneField(
+        Workspace,
+        null=True,
+        on_delete=models.PROTECT,
+    )
+
+    optional_code1_display_name = models.CharField(
+        verbose_name='任意コード1表示名',
+        max_length=512,
+        blank=True,
+    )
+
+    optional_code1_active_flg = models.BooleanField(
+        verbose_name='任意コード1表示フラグ',
+        blank=True,
+        default=True,
+    )
+
+    optional_code2_display_name = models.CharField(
+        verbose_name='任意コード2表示名',
+        max_length=512,
+        blank=True,
+    )
+
+    optional_code2_active_flg = models.BooleanField(
+        verbose_name='任意コード2表示フラグ',
+        blank=True,
+        default=True,
+    )
+
+    optional_code3_display_name = models.CharField(
+        verbose_name='任意コード3表示名',
+        max_length=512,
+        blank=True,
+    )
+
+    optional_code3_active_flg = models.BooleanField(
+        verbose_name='任意コード3表示フラグ',
+        blank=True,
+        default=True,
+    )

@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomerInfo, ContactInfo, AddressInfo, GoalSetting, WorkspaceEnvironmentSetting
+from .models import CustomerInfo, ContactInfo, AddressInfo, GoalSetting, WorkspaceEnvironmentSetting, CustomerInfoDisplaySetting
 from register.models import User
 from sfa.common_util import ExtractNumber
 import bootstrap_datepicker_plus as datetimepicker
@@ -535,3 +535,20 @@ class WorkspaceEnvironmentSettingForm(forms.ModelForm):
         widgets = {
             'workspace': forms.HiddenInput(),
         }
+
+class CustomerInfoDisplaySettingForm(forms.ModelForm):
+    class Meta:
+        model = CustomerInfoDisplaySetting
+        fields = (
+            'workspace',
+            'optional_code1_display_name',
+            'optional_code1_active_flg',
+            'optional_code2_display_name',
+            'optional_code2_active_flg',
+            'optional_code3_display_name',
+            'optional_code3_active_flg',
+        )
+        widgets = {
+            'workspace': forms.HiddenInput(),
+        }
+
