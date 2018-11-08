@@ -769,13 +769,18 @@ class CustomerInfoBulkUpdateView(LoginRequiredMixin, TemplateView):
             if not action_status:
                 continue
             target = CustomerInfo.objects.get(pk=check_id)
+            if not target.is_editable(request.user.email):
+                continue
             if action_status == '0' or action_status == '1' or action_status == '2' or action_status == '3':
                 target.action_status = action_status  # 進捗状況
             elif action_status == '10':
                 target.sales_person = request.user  # 営業担当者
+            elif action_status == '99':
+                target.delete_flg = True
 
-            # 住所から緯度・経度を取得する
-            if not (target.latitude and target.longitude):
+            # 削除処理以外の場合は住所から緯度・経度を取得する
+            if action_status != '99' and not (target.latitude
+                                              and target.longitude):
                 address_str = target.address1 + target.address2  # 住所を取得
                 # 住所から緯度経度を取得するためのAPIキー
                 try:
@@ -801,88 +806,26 @@ class CustomerInfoBulkUpdateView(LoginRequiredMixin, TemplateView):
         return redirect('customer_list_user')
 
 
-class CustomerInfoDeleteView(LoginRequiredMixin, UpdateView):
+class CustomerInfoDeleteView(LoginRequiredMixin, TemplateView):
     """ 顧客情報を削除する """
     model = CustomerInfo
-    form_class = CustomerInfoDeleteForm
-    success_url = reverse_lazy('customer_list_user')
-    template_name_suffix = '_delete_form'
 
     def dispatch(self, request, *args, **kwargs):
-        # ワークスペースに所属し、有効になっている場合のみ表示できる
-        if request.user.workspace and request.user.is_workspace_active:
+        # 顧客情報の削除は、以下の条件を満たす場合のみ実施できる
+        # ・ワークスペースに所属し、有効になっている
+        # ・対象の顧客情報が編集可能
+        target = CustomerInfo.objects.get(pk=self.kwargs['pk'])
+        if request.user.workspace and request.user.is_workspace_active and target.is_editable(
+                request.user.email):
             return super().dispatch(request, *args, **kwargs)
         else:
             return redirect('index')
 
-    def get_queryset(self):
-        """
-        以下の条件に合致する顧客情報が処理の対象となる
-         AND条件
-         ・削除フラグが立っていない
-         ・同一ワークスペース
-         OR条件
-         ・作成者が自分
-         ・編集可能ユーザーが自分
-         ・編集可能グループが自分が所属するグループと一致
-        """
-        return CustomerInfo.objects.filter(
-            workspace=self.request.user.workspace, delete_flg='False').filter(
-                Q(public_status='2')
-                | Q(author=self.request.user.email)
-                | Q(shared_edit_user=self.request.user)
-                | Q(shared_edit_group__in=self.request.user.my_group.all())
-            ).distinct().order_by('-created_timestamp')
-
-    def post(self, request, **kwargs):
-        """
-        修正者の自動入力
-        """
-        request.POST = request.POST.copy()
-        # ログインユーザー情報の取得
-        user = request.user
-        # 修正者にログインユーザーのメールアドレスを入力
-        request.POST['modifier'] = user.email
-
-        return super().post(request, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        """
-        選択可能な共有ユーザーを同一ワークスペースで絞り込み、作成者は除外する
-        """
-        ctx = super().get_context_data(**kwargs)
-        form = ctx['form']
-        shared_edit_user = form.fields['shared_edit_user']
-        shared_view_user = form.fields['shared_view_user']
-        author = CustomerInfo.objects.get(pk=self.kwargs['pk']).author
-        login_user = self.request.user
-        shared_edit_user.queryset = User.objects.filter(
-            workspace=login_user.workspace.pk).exclude(email=author)
-        shared_view_user.queryset = User.objects.filter(
-            workspace=login_user.workspace.pk).exclude(email=author)
-
-        # 顧客情報の表示制御を行う
-        try:
-            customer_info_display_setting = self.request.user.workspace.customerinfodisplaysetting
-            optional_code1 = form.fields['optional_code1']
-            optional_code2 = form.fields['optional_code2']
-            optional_code3 = form.fields['optional_code3']
-            if not customer_info_display_setting.optional_code1_active_flg:
-                optional_code1.widget = forms.HiddenInput()
-            if not customer_info_display_setting.optional_code2_active_flg:
-                optional_code2.widget = forms.HiddenInput()
-            if not customer_info_display_setting.optional_code3_active_flg:
-                optional_code3.widget = forms.HiddenInput()
-            if customer_info_display_setting.optional_code1_display_name:
-                optional_code1.label = customer_info_display_setting.optional_code1_display_name
-            if customer_info_display_setting.optional_code2_display_name:
-                optional_code2.label = customer_info_display_setting.optional_code2_display_name
-            if customer_info_display_setting.optional_code3_display_name:
-                optional_code3.label = customer_info_display_setting.optional_code3_display_name
-        except:
-            pass
-
-        return ctx
+    def get(self, request, **kwargs):
+        target = CustomerInfo.objects.get(pk=self.kwargs['pk'])
+        target.delete_flg = True
+        target.save()
+        return redirect('customer_list_user')
 
 
 class CustomerInfoImportView(generic.FormView):
@@ -1242,11 +1185,9 @@ class ContactInfoFromCustomerUpdateView(ContactInfoUpdateView):
         return redirect('contactinfo_by_customer_list', pk)
 
 
-class ContactInfoByCustomerDeleteView(LoginRequiredMixin, UpdateView):
+class ContactInfoByCustomerDeleteView(LoginRequiredMixin, TemplateView):
     """ 顧客情報毎一覧からの削除処理（コンタクト情報） """
     model = ContactInfo
-    form_class = ContactInfoForm
-    success_url = reverse_lazy('contactinfo_by_customer_list')
 
     def get(self, request, **kwargs):
         target = ContactInfo.objects.get(pk=self.kwargs['pk'])
@@ -1267,11 +1208,9 @@ class ContactInfoByCustomerDeleteView(LoginRequiredMixin, UpdateView):
             return redirect('index')
 
 
-class ContactInfoByUserDeleteView(LoginRequiredMixin, UpdateView):
+class ContactInfoByUserDeleteView(LoginRequiredMixin, TemplateView):
     """ ユーザー毎一覧からの削除処理（コンタクト情報） """
     model = ContactInfo
-    form_class = ContactInfoForm
-    success_url = reverse_lazy('contactinfo_by_user_list')
 
     def get(self, request, **kwargs):
         target = ContactInfo.objects.get(pk=self.kwargs['pk'])
