@@ -65,6 +65,31 @@ window.onload = function(){
 				</div>
 			</div>
 		</div>
+		<div id="phoneNumberModal" class="modal fade" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">電話番号で検索</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<form id="phone_filter" method="get" action="{% url 'customer_list_duplicate' %}" >
+						<div class="modal-body">
+			                {% csrf_token %}
+			                <div class="form-group is-valid">
+			                	<label for="id_phone_number">電話番号</label>
+				                <input type="text" name="phone_number" value="" class="form-control is-valid" placeholder="電話番号" title="" id="id_phone_number">
+			                </div>
+						</div>
+					</form>
+					<div class="modal-footer">
+						<a data-dismiss="modal"><button class="btn btn-outline-secondary" type="button" id="id_back">戻る</button></a>
+						<button type="submit" class="btn btn-outline-primary" form="phone_filter" id="id_search_phone_number">検索</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="row">
 			<div class="col-12">
 				{% if map_view %}
@@ -104,6 +129,10 @@ window.onload = function(){
 								<a href="./?action_status=1" class="dropdown-item">対応予定</a>
 								<a href="./?action_status=2" class="dropdown-item">対応中</a>
 								<a href="./?action_status=3&action_status_ex=" class="dropdown-item">対応終了</a>
+								<div class="dropdown-header">
+									<strong>電話番号で検索</strong>
+								</div>
+				            	<a href="#" class="dropdown-item" data-toggle="modal" data-target="#phoneNumberModal">電話番号で検索</a>
 								<div class="dropdown-header">
 									<strong>その他の検索</strong>
 								</div>
@@ -182,6 +211,9 @@ window.onload = function(){
 	                    	{% if customerinfo.tel_number1 or customerinfo.tel_number2 or customerinfo.tel_number3 %}
 	                    		<i class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="" data-original-title="電話番号あり"></i>
 	                    	{% endif %}
+                    		{% if customerinfo.tel_number1_duplicate_count > 0 or customerinfo.tel_number2_duplicate_count > 0 or customerinfo.tel_number3_duplicate_count > 0 %}
+	                    		<span class="text-warning"><i class="fa fa-warning" data-toggle="tooltip" data-placement="top" title="" data-original-title="重複あり"></i></span>
+                    		{% endif %}
 	                    	{% if customerinfo.fax_number %}
 	                    		<i class="fa fa-fax" data-toggle="tooltip" data-placement="top" title="" data-original-title="FAX番号あり"></i>
 	                    	{% endif %}
@@ -227,7 +259,7 @@ window.onload = function(){
 			                    		{% endif %}
 			                        	{% if customerinfo.pk|is_editable:user.email %}
 			                        		<a href="{% url 'update' customerinfo.pk %}" class="dropdown-item"><i class="fa fa-pencil"></i>顧客情報編集</a>
-				                        	<a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteModal{{ contactinfo.pk }}" id="id_cutomerinfo_delete"><span class="text-danger"><i class="fa fa-trash"></i>顧客情報削除</span></a>
+				                        	<a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteModal{{ customerinfo.pk }}" id="id_cutomerinfo_delete"><span class="text-danger"><i class="fa fa-trash"></i>顧客情報削除</span></a>
 			                        	{% endif %}
 									</div>
 								</div>
@@ -257,9 +289,9 @@ window.onload = function(){
 		                    <div class="collapse" id="moreInfo{{ forloop.counter }}">
 		                    	{% get_verbose_field_name customerinfo_list.first "corporate_number" %}：{{ customerinfo.corporate_number }}<br/>
 		                    	住所：{{ customerinfo.address1 }}{{ customerinfo.address2 }}{{ customerinfo.address3 }}<br/>
-		                    	{% get_verbose_field_name customerinfo_list.first "tel_number1" %}：{{ customerinfo.tel_number1 }}<br/>
-		                    	{% get_verbose_field_name customerinfo_list.first "tel_number2" %}：{{ customerinfo.tel_number2 }}<br/>
-		                    	{% get_verbose_field_name customerinfo_list.first "tel_number3" %}：{{ customerinfo.tel_number3 }}<br/>
+		                    	{% get_verbose_field_name customerinfo_list.first "tel_number1" %}：{{ customerinfo.tel_number1 }}{% if customerinfo.tel_number1_duplicate_count > 0 %}<span class="text-warning"><i class="fa fa-warning" data-toggle="tooltip" data-placement="top" title="" data-original-title="重複件数:{{customerinfo.tel_number1_duplicate_count}}件"></i></span><a class="btn btn-outline-primary" href="{% url 'customer_list_duplicate' %}?action_status_ex=&phone_number={{ customerinfo.tel_number1 }}">重複を確認</a>{% endif %}<br/>
+		                    	{% get_verbose_field_name customerinfo_list.first "tel_number2" %}：{{ customerinfo.tel_number2 }}{% if customerinfo.tel_number2_duplicate_count > 0 %}<span class="text-warning"><i class="fa fa-warning" data-toggle="tooltip" data-placement="top" title="" data-original-title="重複件数:{{customerinfo.tel_number2_duplicate_count}}件"></i></span><a class="btn btn-outline-primary" href="{% url 'customer_list_duplicate' %}?action_status_ex=&phone_number={{ customerinfo.tel_number2 }}">重複を確認</a>{% endif %}<br/>
+		                    	{% get_verbose_field_name customerinfo_list.first "tel_number3" %}：{{ customerinfo.tel_number3 }}{% if customerinfo.tel_number3_duplicate_count > 0 %}<span class="text-warning"><i class="fa fa-warning" data-toggle="tooltip" data-placement="top" title="" data-original-title="重複件数:{{customerinfo.tel_number3_duplicate_count}}件"></i></span><a class="btn btn-outline-primary" href="{% url 'customer_list_duplicate' %}?action_status_ex=&phone_number={{ customerinfo.tel_number3 }}">重複を確認</a>{% endif %}<br/>
 		                    	FAX番号：{{ customerinfo.fax_number }}<br/>
 		                    	メールアドレス：{{ customerinfo.mail_address }}<br/>
 		                    	代表者：{{ customerinfo.representative }}<br/>
