@@ -13,7 +13,7 @@ from django.db import transaction
 from pure_pagination.mixins import PaginationMixin
 from pytz import timezone
 from register.models import User
-from sfa.common_util import ExtractNumber, DecimalDefaultProc
+from sfa.common_util import ExtractNumber, DecimalDefaultProc, CheckDuplicatePhoneNumber
 from .filters import CustomerInfoFilter, ContactInfoFilter
 from .forms import ContactInfoForm, CustomerInfoForm, CustomerInfoDeleteForm, AddressInfoForm, AddressInfoUploadForm, CustomerInfoUploadForm, VisitHistoryForm, VisitPlanForm, CallHistoryForm, GoalSettingForm, WorkspaceEnvironmentSettingForm, CustomerInfoDisplaySettingForm
 from .models import ContactInfo, CustomerInfo, MyGroup, AddressInfo, GoalSetting, WorkspaceEnvironmentSetting, CustomerInfoDisplaySetting
@@ -431,6 +431,53 @@ class CustomerInfoAllMapView(CustomerInfoAllFilterView):
         return ctx
 
 
+class CustomerInfoCheckDuplicateView(CustomerInfoFilterView):
+    """ 電話番号が重複している顧客情報一覧を表示 """
+
+    def get_queryset(self):
+        """
+        以下の条件に合致する顧客情報が処理の対象となる
+         OR条件
+         ・電話番号1が渡された電話番号と一致
+         ・電話番号2が渡された電話番号と一致
+         ・電話番号3が渡された電話番号と一致
+         AND条件
+         ・削除フラグが立っていない
+         ・同一ワークスペース
+         OR条件
+         ・作成者が自分
+         ・編集可能ユーザーが自分
+         ・参照可能ユーザーが自分
+         ・編集可能グループが自分が所属するグループと一致
+         ・参照可能グループが自分が所属するグループと一致
+        """
+        phone_number = self.request.GET[
+            'phone_number'] if 'phone_number' in self.request.GET else ''
+        if not phone_number:
+            return redirect('customer_list_user')
+        return CustomerInfo.objects.filter(
+            Q(tel_number1=phone_number) | Q(tel_number2=phone_number)
+            | Q(tel_number3=phone_number)).filter(
+                workspace=self.request.user.workspace,
+                delete_flg='False').filter(
+                    Q(public_status='1')
+                    | Q(public_status='2')
+                    | Q(author=self.request.user.email)
+                    | Q(shared_edit_user=self.request.user)
+                    | Q(shared_view_user=self.request.user)
+                    | Q(shared_edit_group__in=self.request.user.my_group.all())
+                    | Q(shared_view_group__in=self.request.user.my_group.all())
+                ).distinct().order_by('-created_timestamp')
+
+    def get_context_data(self, **kwargs):
+        """
+        テンプレートに渡す値をセットする
+        """
+        ctx = super().get_context_data(**kwargs)
+        ctx['filtering_range'] = 'all'  # 絞り込みの範囲は全体
+        return ctx
+
+
 class CustomerInfoDetailView(LoginRequiredMixin, DetailView):
     """ 詳細画面（顧客情報） """
     model = CustomerInfo
@@ -568,8 +615,24 @@ class CustomerInfoCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         """
-        住所から緯度経度を取得
+        フォーム入力後の処理
         """
+        # 電話番号の重複チェック
+        tel_number1 = self.request.POST[
+            'tel_number1'] if 'tel_number1' in self.request.POST else ''
+        tel_number2 = self.request.POST[
+            'tel_number2'] if 'tel_number1' in self.request.POST else ''
+        tel_number3 = self.request.POST[
+            'tel_number3'] if 'tel_number1' in self.request.POST else ''
+        form.instance.tel_number1_duplicate_count = CheckDuplicatePhoneNumber(
+            tel_number1, self.request.user)
+        form.instance.tel_number2_duplicate_count = CheckDuplicatePhoneNumber(
+            tel_number2, self.request.user)
+        form.instance.tel_number3_duplicate_count = CheckDuplicatePhoneNumber(
+            tel_number3, self.request.user)
+        form.save()
+
+        # 住所から緯度経度を取得
         # すでに緯度経度が入力済みの場合は何もしない
         latitude = self.request.POST[
             'latitude'] if 'latitude' in self.request.POST else ''
@@ -946,6 +1009,13 @@ class CustomerInfoImportView(generic.FormView):
                 customerinfo.workspace = self.request.user.workspace
                 customerinfo.author = self.request.user.email
                 customerinfo.modifier = self.request.user.email
+                # 電話番号の重複チェック
+                customerinfo.tel_number1_duplicate_count = CheckDuplicatePhoneNumber(
+                    customerinfo.tel_number1, self.request.user)
+                customerinfo.tel_number2_duplicate_count = CheckDuplicatePhoneNumber(
+                    customerinfo.tel_number2, self.request.user)
+                customerinfo.tel_number3_duplicate_count = CheckDuplicatePhoneNumber(
+                    customerinfo.tel_number3, self.request.user)
                 customerinfo.save()
 
         except Exception as e:

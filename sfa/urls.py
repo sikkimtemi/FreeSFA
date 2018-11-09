@@ -11,6 +11,7 @@ from .views import (
     CustomerInfoGroupMapView,
     CustomerInfoAllFilterView,
     CustomerInfoAllMapView,
+    CustomerInfoCheckDuplicateView,
     CustomerInfoDetailView,
     CustomerInfoCreateView,
     CustomerInfoUpdateView,
@@ -81,6 +82,10 @@ urlpatterns = [
         'customer_list_all_map/',
         CustomerInfoAllMapView.as_view(),
         name='customer_list_all_map'),
+    path(
+        'customer_list_duplicate/',
+        CustomerInfoCheckDuplicateView.as_view(),
+        name='customer_list_duplicate'),
     path(
         'customer_area_search/',
         CustomerInfoAreaSearchView.as_view(),

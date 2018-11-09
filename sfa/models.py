@@ -79,6 +79,11 @@ class CustomerInfo(models.Model):
         validators=[number_regex],
     )
 
+    tel_number1_duplicate_count = models.IntegerField(
+        verbose_name='電話番号1の重複件数',
+        default=0,
+    )
+
     tel_number2 = models.CharField(
         verbose_name='電話番号2',
         max_length=15,
@@ -86,11 +91,21 @@ class CustomerInfo(models.Model):
         validators=[number_regex],
     )
 
+    tel_number2_duplicate_count = models.IntegerField(
+        verbose_name='電話番号2の重複件数',
+        default=0,
+    )
+
     tel_number3 = models.CharField(
         verbose_name='電話番号3',
         max_length=15,
         blank=True,
         validators=[number_regex],
+    )
+
+    tel_number3_duplicate_count = models.IntegerField(
+        verbose_name='電話番号3の重複件数',
+        default=0,
     )
 
     fax_number = models.CharField(
