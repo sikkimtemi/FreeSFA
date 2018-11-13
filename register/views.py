@@ -152,11 +152,6 @@ class UserCreateComplete(generic.TemplateView):
         return HttpResponseBadRequest()
 
 
-class Logout(LoginRequiredMixin, LogoutView):
-    """ログアウトページ"""
-    template_name = 'register/top.html'
-
-
 class OnlyYouMixin(UserPassesTestMixin):
     """本人か、スーパーユーザーだけユーザーページアクセスを許可する"""
     raise_exception = True
@@ -582,7 +577,6 @@ class UserRoleUpdateView(LoginRequiredMixin, UpdateView):
         if login_user.workspace_role == '1':
             form.fields['workspace_role'].choices = [('0', '一般ユーザー'), ('1',
                                                                        '管理者')]
-        # TODO: GETやPOSTで直接'2'を入力された場合の対応（たぶんValidationでいける？）
 
         return ctx
 
