@@ -51,6 +51,8 @@ class CustomerInfoFilterView(LoginRequiredMixin, PaginationMixin, FilterView):
          ・同一ワークスペース
          ・営業担当者がログインユーザー
          OR条件
+         ・ワークスペースの公開ステータスが閲覧可能
+         ・ワークスペースの公開ステータスが編集可能
          ・作成者が自分
          ・編集可能ユーザーが自分
          ・参照可能ユーザーが自分
@@ -286,6 +288,8 @@ class CustomerInfoGroupFilterView(CustomerInfoFilterView):
          ・同一ワークスペース
          ・営業担当者が自分と同一グループのユーザー
          OR条件
+         ・ワークスペースの公開ステータスが閲覧可能
+         ・ワークスペースの公開ステータスが編集可能
          ・作成者が自分
          ・編集可能ユーザーが自分
          ・参照可能ユーザーが自分
@@ -364,6 +368,8 @@ class CustomerInfoAllFilterView(CustomerInfoFilterView):
          ・削除フラグが立っていない
          ・同一ワークスペース
          OR条件
+         ・ワークスペースの公開ステータスが閲覧可能
+         ・ワークスペースの公開ステータスが編集可能
          ・作成者が自分
          ・編集可能ユーザーが自分
          ・参照可能ユーザーが自分
@@ -496,6 +502,8 @@ class CustomerInfoDetailView(LoginRequiredMixin, DetailView):
          ・削除フラグが立っていない
          ・同一ワークスペース
          OR条件
+         ・ワークスペースの公開ステータスが閲覧可能
+         ・ワークスペースの公開ステータスが編集可能
          ・作成者が自分
          ・編集可能ユーザーが自分
          ・参照可能ユーザーが自分
@@ -692,6 +700,7 @@ class CustomerInfoUpdateView(LoginRequiredMixin, UpdateView):
          ・削除フラグが立っていない
          ・同一ワークスペース
          OR条件
+         ・ワークスペースの公開ステータスが編集可能
          ・作成者が自分
          ・編集可能ユーザーが自分
          ・編集可能グループが自分が所属するグループと一致
