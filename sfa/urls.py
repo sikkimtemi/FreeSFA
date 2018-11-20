@@ -1,6 +1,7 @@
 from django.urls import path
 from django.conf.urls import include
 from django.contrib.auth import views
+from . import views
 from .views import (
     WelcomeView,
     DashboardView,
@@ -238,4 +239,5 @@ urlpatterns = [
         'customer_info_display_setting_update/<int:pk>/',
         CustomerInfoDisplaySettingUpdateView.as_view(),
         name='customer_info_display_setting_update'),
+    path('.well-known/acme-challenge/<token>/', views.acme_challenge, name='acme-challenge'),
 ]

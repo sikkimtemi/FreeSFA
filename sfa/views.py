@@ -3,6 +3,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic
@@ -21,6 +22,7 @@ import csv
 import datetime
 import io
 import json
+import os
 import requests
 
 base_url = 'https://maps.googleapis.com/maps/api/geocode/json?language=ja&address={}&key='
@@ -2230,3 +2232,17 @@ class CustomerInfoDisplaySettingUpdateView(LoginRequiredMixin, UpdateView):
             return super().dispatch(request, *args, **kwargs)
         else:
             return redirect('index')
+
+def acme_challenge(request, token):
+    def find_key(token):
+        if token == os.environ.get("ACME_TOKEN"):
+            return os.environ.get("ACME_KEY")
+        for k, v in os.environ.items():
+            if v == token and k.startswith("ACME_TOKEN_"):
+                n = k.replace("ACME_TOKEN_", "")
+                return os.environ.get("ACME_KEY_{}".format(n))
+    key = find_key(token)
+    if key is None:
+        raise Http404()
+    return HttpResponse(key)
+    
