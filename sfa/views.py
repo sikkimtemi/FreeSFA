@@ -1341,7 +1341,7 @@ class ContactInfoByCustomerListView(LoginRequiredMixin, PaginationMixin,
     template_name = 'sfa/contactinfo_by_customer_list.html'
 
     # pure_pagination用設定
-    paginate_by = 10
+    paginate_by = 30
     object = ContactInfo
 
     def get_queryset(self):
@@ -1389,7 +1389,7 @@ class ContactInfoByUserListView(LoginRequiredMixin, PaginationMixin,
     template_name = 'sfa/contactinfo_by_user_list.html'
 
     # pure_pagination用設定
-    paginate_by = 10
+    paginate_by = 30
     object = ContactInfo
 
     def get_queryset(self):
@@ -1475,7 +1475,7 @@ class AddressInfoListView(PaginationMixin, ListView):
     template_name = 'sfa/addressinfo_list.html'
 
     # pure_pagination用設定
-    paginate_by = 10
+    paginate_by = 30
     object = AddressInfo
 
     def get_queryset(self):
