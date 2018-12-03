@@ -1,8 +1,6 @@
 # FreeSFA
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
-準備中です。2018年12月4日にリリース予定です。
-
 # 概要
 
 https://free-sfa.tk/
@@ -93,5 +91,4 @@ $ python manage.py runserver $IP:$PORT
 
 Herokuへのデプロイ方法はこちらを御覧ください。
 
-https://qiita.com/sikkim/private/1ed202083edc776e428e
-
+https://qiita.com/sikkim/items/5bb30abc44e5ac7676f6
